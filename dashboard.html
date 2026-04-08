@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
@@ -96,6 +96,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
     <button class="nav-item" onclick="showPage('hwid')" id="nav-hwid"><span class="icon">🔒</span> HWID</button>
     <button class="nav-item" onclick="showPage('subscription')" id="nav-subscription"><span class="icon">⭐</span> Подписка</button>
     <button class="nav-item" onclick="showPage('download')" id="nav-download"><span class="icon">⬇️</span> Скачать</button>
+    <button class="nav-item" onclick="showPage('security')" id="nav-security"><span class="icon">🔑</span> Безопасность</button>
     <div id="admin-nav-items" style="display:none;">
       <div class="nav-sep"></div>
       <button class="nav-item" onclick="showPage('admin')" id="nav-admin"><span class="icon">👑</span> Админ панель</button>
@@ -201,6 +202,25 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
           </div>
         </div>
         <p style="font-size:12px;color:var(--muted);margin-top:16px;">После оплаты напиши в <a href="https://t.me/famesupp" style="color:var(--accent);">Telegram</a> с чеком — активируем вручную.</p>
+      </div>
+    </div>
+
+    <!-- SECURITY -->
+    <div class="page" id="page-security">
+      <div class="page-title">Безопасность</div>
+
+      <div class="card">
+        <div class="card-title">Смена пароля</div>
+        <div class="msg" id="pw-msg"></div>
+        <div class="form-group"><label>Новый пароль</label><input type="password" id="pw-new" placeholder="Минимум 6 символов" autocomplete="new-password"></div>
+        <div class="form-group"><label>Повтори пароль</label><input type="password" id="pw-confirm" placeholder="Повтори новый пароль" autocomplete="new-password"></div>
+        <button class="submit-btn" onclick="changePassword()">Сменить пароль</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Email</div>
+        <div style="font-size:13px;color:var(--dim);margin-bottom:12px;" id="security-email">—</div>
+        <p style="font-size:12px;color:var(--muted);">Для смены email напиши в <a href="https://t.me/famesupp" style="color:var(--accent);">поддержку</a>.</p>
       </div>
     </div>
 
@@ -526,9 +546,45 @@ function buyPlan(plan, price) {
   window.open(`https://t.me/famesupp?text=${msg}`, '_blank');
 }
 
+// ─── CHANGE PASSWORD ──────────────────────────────────────
+async function changePassword() {
+  const pw  = document.getElementById('pw-new').value;
+  const pw2 = document.getElementById('pw-confirm').value;
+  const msg = document.getElementById('pw-msg');
+
+  msg.style.display = 'none';
+  if (!pw || pw.length < 6) { showPwMsg('Пароль минимум 6 символов', 'error'); return; }
+  if (pw !== pw2)            { showPwMsg('Пароли не совпадают', 'error'); return; }
+
+  try {
+    const r = await fetchWithAuth(SUPABASE_URL + '/auth/v1/user', {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ password: pw })
+    });
+    if (!r) { showPwMsg('Ошибка авторизации', 'error'); return; }
+    const data = await r.json();
+    if (data.id || data.email) {
+      showPwMsg('Пароль успешно изменён', 'success');
+      document.getElementById('pw-new').value = '';
+      document.getElementById('pw-confirm').value = '';
+    } else {
+      showPwMsg(data.error_description || data.msg || 'Ошибка смены пароля', 'error');
+    }
+  } catch(e) { showPwMsg('Ошибка: ' + e.message, 'error'); }
+}
+
+function showPwMsg(text, type) {
+  const el = document.getElementById('pw-msg');
+  el.textContent = text;
+  el.className = 'msg ' + type;
+  el.style.display = 'block';
+  setTimeout(() => el.style.display = 'none', 4000);
+}
+
 // ─── DOWNLOAD ─────────────────────────────────────────────
 // INSTALLER_URL — замени на прямую ссылку на FameInstaller.exe после загрузки в GitHub Releases
-const INSTALLER_URL = 'https://github.com/attacktrip/Fame/releases/latest/download/FameInstaller.exe';
+const INSTALLER_URL = 'https://github.com/ТВО_НИК/fameclient-site/releases/latest/download/FameInstaller.exe';
 
 function renderDownloadPage() {
   if (!userData) return;
