@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
@@ -81,10 +81,67 @@ footer a:hover{color:var(--accent)}
     <a href="https://t.me/fameoftrip" target="_blank">Telegram</a>
   </div>
   <div style="display:flex;gap:8px">
-    <a class="nav-btn" style="background:transparent;border:1px solid rgba(255,255,255,.15);color:var(--dim)" href="dashboard.html">Кабинет</a>
+    <a class="nav-btn" style="background:transparent;border:1px solid rgba(255,255,255,.15);color:var(--dim)" href="#" onclick="openLogin();return false">Кабинет</a>
     <a class="nav-btn" href="https://t.me/fameoftrip" target="_blank">Купить</a>
   </div>
 </nav>
+
+<!-- LOGIN MODAL -->
+<div id="loginModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:center;justify-content:center">
+  <div style="background:#13131a;border:1px solid rgba(255,255,255,.15);border-radius:14px;padding:32px;width:360px;max-width:95vw">
+    <h3 style="font-size:18px;font-weight:800;margin-bottom:6px;color:#e8e8f0">Войти в кабинет</h3>
+    <p style="font-size:13px;color:#8888a0;margin-bottom:20px">Введи данные от аккаунта Fame Client</p>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <input id="lEmail" type="email" placeholder="Email" style="background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.14);border-radius:7px;padding:10px 14px;color:#e8e8f0;font-size:13px;outline:none">
+      <input id="lPass" type="password" placeholder="Пароль" style="background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.14);border-radius:7px;padding:10px 14px;color:#e8e8f0;font-size:13px;outline:none" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <div id="lErr" style="color:#f87171;font-size:12px;margin-top:8px;min-height:16px"></div>
+    <div style="display:flex;gap:10px;margin-top:14px">
+      <button onclick="document.getElementById('loginModal').style.display='none'" style="flex:1;padding:10px;background:transparent;border:1px solid rgba(255,255,255,.14);border-radius:8px;color:#8888a0;cursor:pointer;font-size:13px">Отмена</button>
+      <button id="lBtn" onclick="doLogin()" style="flex:1;padding:10px;background:#7c6af7;border:none;border-radius:8px;color:#fff;font-weight:700;cursor:pointer;font-size:13px">Войти</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const _SB='https://bobxvjnlouzdhdsifkzr.supabase.co';
+const _KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJvYnh2am5sb3V6ZGhkc2lma3pyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2NjMwODEsImV4cCI6MjA5MTIzOTA4MX0._2cIv6r4LhpQv4cnQqx4vTJ4cp9tUDINg-IqBLh1S5w';
+
+function openLogin(){
+  // If already logged in — go straight to dashboard
+  const s = localStorage.getItem('fame_session');
+  if(s){try{const p=JSON.parse(s);if(p?.access_token){window.location.href='dashboard.html';return;}}catch(e){}}
+  document.getElementById('loginModal').style.display='flex';
+  setTimeout(()=>document.getElementById('lEmail').focus(),100);
+}
+
+async function doLogin(){
+  const email=document.getElementById('lEmail').value.trim();
+  const pass=document.getElementById('lPass').value;
+  const err=document.getElementById('lErr');
+  const btn=document.getElementById('lBtn');
+  err.textContent='';
+  if(!email||!pass){err.textContent='Заполни все поля';return;}
+  btn.textContent='Входим...';btn.disabled=true;
+  try{
+    const r=await fetch(_SB+'/auth/v1/token?grant_type=password',{
+      method:'POST',
+      headers:{'apikey':_KEY,'Content-Type':'application/json'},
+      body:JSON.stringify({email,password:pass})
+    });
+    const d=await r.json();
+    if(!d.access_token){
+      err.textContent=d.error_description||d.msg||'Неверный email или пароль';
+      btn.textContent='Войти';btn.disabled=false;return;
+    }
+    localStorage.setItem('fame_session',JSON.stringify(d));
+    window.location.href='dashboard.html';
+  }catch(e){
+    err.textContent='Ошибка соединения';
+    btn.textContent='Войти';btn.disabled=false;
+  }
+}
+</script>
 
 <div class="hero">
   <div class="hero-badge">Minecraft 1.16.5 &amp; 1.21.4</div>
@@ -115,21 +172,21 @@ footer a:hover{color:var(--accent)}
         <div class="card-name">Basic</div>
         <div class="card-price">299<span>₽</span></div>
         <div class="card-sub">в месяц</div>
-        <a class="card-btn" href="https://funpay.com/lots/offer?id=67287953" target="_blank">Купить на FunPay</a>
+        <a class="card-btn" href="https://funpay.com/lots/offer?id=67250015" target="_blank">Купить на FunPay</a>
       </div>
       <div class="price-card featured">
         <div class="card-version">1.16.5</div>
         <div class="card-name">Premium</div>
         <div class="card-price">499<span>₽</span></div>
         <div class="card-sub">в месяц</div>
-        <a class="card-btn" href="https://funpay.com/lots/offer?id=67287953" target="_blank">Купить на FunPay</a>
+        <a class="card-btn" href="https://funpay.com/lots/offer?id=67279271" target="_blank">Купить на FunPay</a>
       </div>
       <div class="price-card lifetime">
         <div class="card-version">1.16.5</div>
         <div class="card-name">Lifetime</div>
         <div class="card-price">1499<span>₽</span></div>
         <div class="card-sub">единоразово</div>
-        <a class="card-btn" href="https://funpay.com/lots/offer?id=67287953" target="_blank">Купить на FunPay</a>
+        <a class="card-btn" href="https://funpay.com/lots/offer?id=67249907" target="_blank">Купить на FunPay</a>
       </div>
     </div>
   </div>
@@ -192,6 +249,5 @@ function showVersion(id,btn){
   document.getElementById(id).classList.add('active');
   btn.classList.add('active');
 }
-</script>
-</body>
+</script></body>
 </html>
