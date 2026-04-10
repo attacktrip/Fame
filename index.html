@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fame Client — Minecraft Cheat</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0a0c;--card:#13131a;--card2:#1a1a24;
+  --border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.14);
+  --text:#e8e8f0;--dim:#8888a0;--muted:#44445a;
+  --accent:#7c6af7;--accent2:#a78bfa;--green:#4ade80;--gold:#f59e0b;
+}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(124,106,247,.18),transparent);pointer-events:none;z-index:0}
+nav{position:sticky;top:0;z-index:100;backdrop-filter:blur(20px);background:rgba(10,10,12,.8);border-bottom:1px solid var(--border);padding:0 40px;display:flex;align-items:center;justify-content:space-between;height:60px}
+.nav-logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;color:var(--text);text-decoration:none}
+.nav-logo span{color:var(--accent)}
+.nav-links{display:flex;gap:28px}
+.nav-links a{color:var(--dim);text-decoration:none;font-size:14px;transition:color .2s}
+.nav-links a:hover{color:var(--text)}
+.nav-btn{background:var(--accent);color:#fff;border:none;padding:8px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;transition:opacity .2s}
+.nav-btn:hover{opacity:.85}
+.hero{position:relative;z-index:1;text-align:center;padding:100px 20px 60px}
+/* Hero background image with fade */
+.hero-bg{position:absolute;inset:0;background:url('back.png') center/cover no-repeat;z-index:0;-webkit-mask-image:linear-gradient(to bottom,rgba(0,0,0,.7) 0%,rgba(0,0,0,.5) 60%,transparent 100%);mask-image:linear-gradient(to bottom,rgba(0,0,0,.7) 0%,rgba(0,0,0,.5) 60%,transparent 100%)}
+.hero>*{position:relative;z-index:1}
+.hero-gif{width:320px;max-width:90%;border-radius:12px;margin:28px auto 0;display:block;box-shadow:0 8px 40px rgba(0,0,0,.5)}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(124,106,247,.12);border:1px solid rgba(124,106,247,.3);border-radius:20px;padding:5px 14px;font-size:12px;color:var(--accent2);margin-bottom:24px}
+.hero-badge::before{content:'';width:6px;height:6px;background:var(--accent);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.hero h1{font-size:clamp(36px,6vw,72px);font-weight:800;line-height:1.1;margin-bottom:20px;letter-spacing:-1px}
+.hero h1 span{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{font-size:18px;color:var(--dim);max-width:560px;margin:0 auto 40px;line-height:1.6}
+.hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.btn-primary{background:var(--accent);color:#fff;border:none;padding:14px 32px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block}
+.btn-primary:hover{background:var(--accent2);transform:translateY(-1px)}
+.btn-secondary{background:transparent;color:var(--text);border:1px solid var(--border2);padding:14px 32px;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block}
+.btn-secondary:hover{border-color:var(--accent);color:var(--accent)}
+section{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:60px 20px}
+.section-title{text-align:center;margin-bottom:48px}
+.section-title h2{font-size:clamp(24px,4vw,40px);font-weight:800;margin-bottom:10px}
+.section-title p{color:var(--dim);font-size:16px}
+.version-tabs{display:flex;gap:8px;justify-content:center;margin-bottom:40px;flex-wrap:wrap}
+.vtab{padding:8px 22px;border-radius:8px;border:1px solid var(--border2);background:transparent;color:var(--dim);font-size:14px;font-weight:600;cursor:pointer;transition:all .2s}
+.vtab.active,.vtab:hover{background:var(--accent);border-color:var(--accent);color:#fff}
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+.price-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;position:relative;transition:border-color .2s,transform .2s;display:flex;flex-direction:column}
+.price-card:hover{border-color:var(--border2);transform:translateY(-3px)}
+.price-card.featured{border-color:var(--accent);background:linear-gradient(135deg,rgba(124,106,247,.08),var(--card))}
+.price-card.featured::before{content:'Популярное';position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;font-size:11px;font-weight:700;padding:3px 14px;border-radius:20px;white-space:nowrap}
+.price-card.lifetime{border-color:var(--gold);background:linear-gradient(135deg,rgba(245,158,11,.06),var(--card))}
+.price-card.lifetime::before{content:'Навсегда';position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--gold);color:#000;font-size:11px;font-weight:700;padding:3px 14px;border-radius:20px;white-space:nowrap}
+.card-version{font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px}
+.card-name{font-size:22px;font-weight:800;margin-bottom:16px}
+.card-price{font-size:48px;font-weight:900;line-height:1;margin-bottom:4px}
+.card-price span{font-size:20px;font-weight:500;color:var(--dim)}
+.card-sub{font-size:12px;color:var(--muted);margin-bottom:28px}
+.card-btn{display:block;width:100%;padding:13px;border-radius:10px;border:1px solid var(--border2);background:transparent;color:var(--text);font-size:14px;font-weight:700;cursor:pointer;text-decoration:none;text-align:center;transition:all .2s;margin-top:auto}
+.card-btn:hover,.price-card.featured .card-btn{background:var(--accent);border-color:var(--accent);color:#fff}
+.price-card.lifetime .card-btn{background:var(--gold);border-color:var(--gold);color:#000}
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.feat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px;transition:border-color .2s}
+.feat-card:hover{border-color:var(--border2)}
+.feat-icon{font-size:28px;margin-bottom:12px}
+.feat-card h3{font-size:15px;font-weight:700;margin-bottom:6px}
+.feat-card p{font-size:13px;color:var(--dim);line-height:1.5}
+footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:30px 40px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+footer p{color:var(--muted);font-size:13px}
+footer a{color:var(--dim);text-decoration:none;font-size:13px;transition:color .2s}
+footer a:hover{color:var(--accent)}
+.version-panel{display:none}
+.version-panel.active{display:block}
+@media(max-width:600px){nav{padding:0 16px}.nav-links{display:none}.hero{padding:70px 16px 40px}footer{flex-direction:column;text-align:center}}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="#"><span>Fame</span> Client</a>
+  <div class="nav-links">
+    <a href="#pricing">Цены</a>
+    <a href="#features">Функции</a>
+    <a href="https://t.me/fameoftrip" target="_blank">Telegram</a>
+  </div>
+  <div style="display:flex;gap:8px">
+    <a class="nav-btn" style="background:transparent;border:1px solid rgba(255,255,255,.15);color:var(--dim)" href="#" onclick="openLogin('reg');return false">Регистрация</a>
+    <a class="nav-btn" href="#" onclick="openLogin('login');return false">Кабинет</a>
+  </div>
+</nav>
+
+<!-- AUTH MODAL (Войти / Регистрация) -->
+<div id="loginModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:center;justify-content:center">
+  <div style="background:#13131a;border:1px solid rgba(255,255,255,.15);border-radius:14px;padding:28px;width:380px;max-width:95vw;position:relative">
+
+    <!-- Close button -->
+    <button onclick="document.getElementById('loginModal').style.display='none'" style="position:absolute;top:12px;right:14px;background:transparent;border:none;color:#8888a0;font-size:18px;cursor:pointer;line-height:1;padding:2px 6px" title="Закрыть">×</button>
+
+    <!-- Tabs -->
+    <div style="display:flex;gap:3px;margin-bottom:22px;background:rgba(0,0,0,.35);border-radius:9px;padding:3px">
+      <button id="tabLogin" onclick="switchTab('login')" style="flex:1;padding:8px;border:none;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;background:#7c6af7;color:#fff;transition:all .2s">Войти</button>
+      <button id="tabReg"   onclick="switchTab('reg')"   style="flex:1;padding:8px;border:none;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;background:transparent;color:#8888a0;transition:all .2s">Регистрация</button>
+    </div>
+
+    <!-- LOGIN -->
+    <div id="formLogin">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <input id="lEmail" type="email" placeholder="Email" style="background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.14);border-radius:7px;padding:10px 14px;color:#e8e8f0;font-size:13px;outline:none">
+        <input id="lPass"  type="password" placeholder="Пароль" style="background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.14);border-radius:7px;padding:10px 14px;color:#e8e8f0;font-size:13px;outline:none" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <div id="lErr" style="color:#f87171;font-size:12px;margin-top:8px;min-height:16px"></div>
+      <div style="display:flex;gap:10px;margin-top:14px">
+        <button id="lBtn" onclick="doLogin()" style="width:100%;padding:10px;background:#7c6af7;border:none;border-radius:8px;color:#fff;font-weight:700;cursor:pointer;font-size:13px">Войти</button>
+      </div>
+    </div>
+
+    <!-- REGISTER -->
+    <div id="formReg" style="display:none">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <input id="rEmail" type="email"    placeholder="Email" style="background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.14);border-radius:7px;padding:10px 14px;color:#e8e8f0;font-size:13px;outline:none">
+        <input id="rPass"  type="password" placeholder="Пароль (мин. 6 символов)" style="background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.14);border-radius:7px;padding:10px 14px;color:#e8e8f0;font-size:13px;outline:none">
+        <input id="rNick"  type="text"     placeholder="Никнейм в Minecraft" style="background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.14);border-radius:7px;padding:10px 14px;color:#e8e8f0;font-size:13px;outline:none" onkeydown="if(event.key==='Enter')doRegister()">
+      </div>
+      <div id="rErr" style="color:#f87171;font-size:12px;margin-top:8px;min-height:16px"></div>
+      <div style="display:flex;gap:10px;margin-top:14px">
+        <button id="rBtn" onclick="doRegister()" style="width:100%;padding:10px;background:#7c6af7;border:none;border-radius:8px;color:#fff;font-weight:700;cursor:pointer;font-size:13px">Создать аккаунт</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const _SB='https://bobxvjnlouzdhdsifkzr.supabase.co';
+const _KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJvYnh2am5sb3V6ZGhkc2lma3pyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2NjMwODEsImV4cCI6MjA5MTIzOTA4MX0._2cIv6r4LhpQv4cnQqx4vTJ4cp9tUDINg-IqBLh1S5w';
+
+function switchTab(t) {
+  const isL = t==='login';
+  document.getElementById('formLogin').style.display = isL?'':'none';
+  document.getElementById('formReg').style.display   = isL?'none':'';
+  document.getElementById('tabLogin').style.cssText  = `flex:1;padding:8px;border:none;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;background:${isL?'#7c6af7':'transparent'};color:${isL?'#fff':'#8888a0'}`;
+  document.getElementById('tabReg').style.cssText    = `flex:1;padding:8px;border:none;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;background:${isL?'transparent':'#7c6af7'};color:${isL?'#8888a0':'#fff'}`;
+  document.getElementById('lErr').textContent='';
+  document.getElementById('rErr').textContent='';
+}
+
+function openLogin(tab) {
+  const s=localStorage.getItem('fame_session');
+  if(s){try{const p=JSON.parse(s);if(p?.access_token){window.location.href='dashboard.html';return;}}catch(e){}}
+  document.getElementById('loginModal').style.display='flex';
+  switchTab(tab||'login');
+  setTimeout(()=>document.getElementById(tab==='reg'?'rEmail':'lEmail').focus(),100);
+}
+
+async function doLogin() {
+  const email=document.getElementById('lEmail').value.trim();
+  const pass=document.getElementById('lPass').value;
+  const err=document.getElementById('lErr');
+  const btn=document.getElementById('lBtn');
+  err.textContent='';
+  if(!email||!pass){err.textContent='Заполни все поля';return;}
+  btn.textContent='Входим...';btn.disabled=true;
+  try{
+    const r=await fetch(_SB+'/auth/v1/token?grant_type=password',{method:'POST',headers:{'apikey':_KEY,'Content-Type':'application/json'},body:JSON.stringify({email,password:pass})});
+    const d=await r.json();
+    if(!d.access_token){err.textContent=d.error_description||d.msg||'Неверный email или пароль';btn.textContent='Войти';btn.disabled=false;return;}
+    localStorage.setItem('fame_session',JSON.stringify(d));
+    window.location.href='dashboard.html';
+  }catch(e){err.textContent='Ошибка соединения';btn.textContent='Войти';btn.disabled=false;}
+}
+
+async function doRegister() {
+  const email=document.getElementById('rEmail').value.trim();
+  const pass=document.getElementById('rPass').value;
+  const nick=document.getElementById('rNick').value.trim();
+  const err=document.getElementById('rErr');
+  const btn=document.getElementById('rBtn');
+  err.textContent='';
+  if(!email||!pass||!nick){err.textContent='Заполни все поля';return;}
+  if(pass.length<6){err.textContent='Пароль минимум 6 символов';return;}
+  btn.textContent='Создаём...';btn.disabled=true;
+  try{
+    const r=await fetch(_SB+'/auth/v1/signup',{method:'POST',headers:{'apikey':_KEY,'Content-Type':'application/json'},body:JSON.stringify({email,password:pass,data:{nickname:nick}})});
+    const d=await r.json();
+    if(d.user||d.id){
+      // Auto-login
+      const r2=await fetch(_SB+'/auth/v1/token?grant_type=password',{method:'POST',headers:{'apikey':_KEY,'Content-Type':'application/json'},body:JSON.stringify({email,password:pass})});
+      const d2=await r2.json();
+      if(d2.access_token){localStorage.setItem('fame_session',JSON.stringify(d2));window.location.href='dashboard.html';return;}
+      document.getElementById('loginModal').style.display='none';
+      alert('Аккаунт создан! Войди через кнопку "Кабинет".');
+    }else{
+      err.textContent=d.msg||d.error_description||'Ошибка регистрации';
+      btn.textContent='Создать аккаунт';btn.disabled=false;
+    }
+  }catch(e){err.textContent='Ошибка соединения';btn.textContent='Создать аккаунт';btn.disabled=false;}
+}
+</script>
+
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-badge">Minecraft 1.16.5 &amp; 1.21.4</div>
+  <h1>Лучший чит для<br><span>Minecraft</span></h1>
+  <p>Fame Client — мощный чит-клиент с поддержкой версий 1.16.5 и 1.21.4. Обходит античиты, стабильная работа, красивый интерфейс.</p>
+  <div class="hero-btns">
+    <a class="btn-primary" href="#pricing">Купить подписку</a>
+    <a class="btn-secondary" id="heroDownload" href="https://github.com/attacktrip/Fame/releases/latest" target="_blank">↓ Скачать</a>
+    <a class="btn-secondary" href="https://t.me/fameoftrip" target="_blank">Telegram</a>
+  </div>
+  <img src="dasd.gif" alt="Fame Client" class="hero-gif">
+</div>
+
+<script>
+// Update download link with latest release
+fetch('https://api.github.com/repos/attacktrip/Fame/releases/latest',{headers:{'Accept':'application/vnd.github+json'}})
+  .then(r=>r.json()).then(d=>{
+    const a=d.assets?.find(x=>x.name.toLowerCase().endsWith('.exe'));
+    if(a){document.getElementById('heroDownload').href=a.browser_download_url;}
+    else{document.getElementById('heroDownload').href=d.html_url||'https://github.com/attacktrip/Fame/releases/latest';}
+  }).catch(()=>{});
+</script>
+
+<section id="pricing">
+  <div class="section-title">
+    <h2>Выбери свой план</h2>
+    <p>Доступные подписки для каждой версии Minecraft</p>
+  </div>
+
+  <div class="version-tabs">
+    <button class="vtab active" onclick="showVersion('v1165',this)">Minecraft 1.16.5</button>
+    <button class="vtab" onclick="showVersion('v1214',this)">Minecraft 1.21.4</button>
+  </div>
+
+  <!-- 1.16.5 -->
+  <div class="version-panel active" id="v1165">
+    <div class="pricing-grid">
+      <div class="price-card">
+        <div class="card-version">1.16.5</div>
+        <div class="card-name">Basic</div>
+        <div class="card-price">299<span>₽</span></div>
+        <div class="card-sub">в месяц</div>
+        <a class="card-btn" href="https://funpay.com/lots/offer?id=67250015" target="_blank">Купить на FunPay</a>
+      </div>
+      <div class="price-card featured">
+        <div class="card-version">1.16.5</div>
+        <div class="card-name">Premium</div>
+        <div class="card-price">499<span>₽</span></div>
+        <div class="card-sub">в месяц</div>
+        <a class="card-btn" href="https://funpay.com/lots/offer?id=67279271" target="_blank">Купить на FunPay</a>
+      </div>
+      <div class="price-card lifetime">
+        <div class="card-version">1.16.5</div>
+        <div class="card-name">Lifetime</div>
+        <div class="card-price">699<span>₽</span></div>
+        <div class="card-sub">единоразово</div>
+        <a class="card-btn" href="https://funpay.com/lots/offer?id=67249907" target="_blank">Купить на FunPay</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1.21.4 -->
+  <div class="version-panel" id="v1214">
+    <div class="pricing-grid">
+      <div class="price-card">
+        <div class="card-version">1.21.4</div>
+        <div class="card-name">Basic</div>
+        <div class="card-price">599<span>₽</span></div>
+        <div class="card-sub">в месяц</div>
+        <a class="card-btn" href="https://funpay.com/lots/offer?id=67288093" target="_blank">Купить на FunPay</a>
+      </div>
+      <div class="price-card featured">
+        <div class="card-version">1.21.4</div>
+        <div class="card-name">Premium</div>
+        <div class="card-price">799<span>₽</span></div>
+        <div class="card-sub">в месяц</div>
+        <a class="card-btn" href="https://funpay.com/lots/offer?id=67288226" target="_blank">Купить на FunPay</a>
+      </div>
+      <div class="price-card lifetime">
+        <div class="card-version">1.21.4</div>
+        <div class="card-name">Lifetime</div>
+        <div class="card-price">999<span>₽</span></div>
+        <div class="card-sub">единоразово</div>
+        <a class="card-btn" href="https://funpay.com/lots/offer?id=67287953" target="_blank">Купить на FunPay</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="features">
+  <div class="section-title">
+    <h2>Возможности</h2>
+    <p>Fame Client — полный набор инструментов для игры</p>
+  </div>
+  <div class="features-grid">
+    <div class="feat-card"><div class="feat-icon">⚔️</div><h3>Combat</h3><p>KillAura, CriticalHit, AutoClicker, Reach, Velocity и другие боевые модули.</p></div>
+    <div class="feat-card"><div class="feat-icon">🏃</div><h3>Movement</h3><p>Speed, Flight, NoFall, Sprint, Scaffold, Parkour — полный контроль движения.</p></div>
+    <div class="feat-card"><div class="feat-icon">👁️</div><h3>Visual</h3><p>ESP, Tracers, FullBright, Xray, ChestESP — видишь всё что нужно.</p></div>
+    <div class="feat-card"><div class="feat-icon">🛡️</div><h3>Обход античитов</h3><p>Оптимизирован под популярные серверные античиты. Стабильная работа.</p></div>
+    <div class="feat-card"><div class="feat-icon">🎨</div><h3>ClickGUI</h3><p>Красивый и удобный интерфейс. Настройка всех модулей в пару кликов.</p></div>
+    <div class="feat-card"><div class="feat-icon">🔄</div><h3>1.16.5 &amp; 1.21.4</h3><p>Поддержка двух версий Minecraft. Forge для 1.16.5, Fabric для 1.21.4.</p></div>
+  </div>
+</section>
+
+<footer>
+  <p>© 2025 Fame Client. Все права защищены.</p>
+  <div style="display:flex;gap:20px">
+    <a href="https://t.me/fameoftrip" target="_blank">Telegram</a>
+    <a href="#pricing">Купить</a>
+  </div>
+</footer>
+
+<script>
+function showVersion(id,btn){
+  document.querySelectorAll('.version-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.vtab').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+// Latest release download link
+fetch('https://api.github.com/repos/attacktrip/Fame/releases/latest',{headers:{'Accept':'application/vnd.github+json'}})
+  .then(r=>r.json()).then(d=>{
+    const a=d.assets?.find(x=>x.name.toLowerCase().endsWith('.exe'));
+    document.getElementById('heroDownload').href=a?a.browser_download_url:(d.html_url||'https://github.com/attacktrip/Fame/releases/latest');
+  }).catch(()=>{});
+// Auto-open register modal if #register in URL
+if(window.location.hash==='#register'){openLogin('reg');}
+</script></body>
+</html>
