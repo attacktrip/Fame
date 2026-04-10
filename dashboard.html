@@ -131,6 +131,20 @@ nav{position:sticky;top:0;z-index:100;backdrop-filter:blur(20px);background:rgba
     </div>
   </div>
 
+  <!-- DOWNLOAD -->
+  <div class="card">
+    <div class="card-title">Скачать клиент</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+      <div>
+        <div style="font-size:15px;font-weight:700;margin-bottom:4px">Fame Client Installer</div>
+        <div style="font-size:12px;color:var(--dim)" id="releaseInfo">Загрузка информации...</div>
+      </div>
+      <a id="downloadBtn" href="#" onclick="downloadInstaller(event)" class="btn btn-primary" style="gap:8px;padding:11px 22px;font-size:14px">
+        ↓ Скачать
+      </a>
+    </div>
+  </div>
+
 </div>
 
 <div class="toast" id="toast"></div>
@@ -329,7 +343,47 @@ async function doDashLogin() {
   }
 }
 
+let _downloadUrl = null;
+
+async function loadRelease() {
+  try {
+    const r = await fetch('https://api.github.com/repos/attacktrip/Fame/releases/latest', {
+      headers: { 'Accept': 'application/vnd.github+json' }
+    });
+    if (!r.ok) throw new Error('GitHub API ' + r.status);
+    const data = await r.json();
+
+    // Find .exe asset
+    const asset = data.assets?.find(a => a.name.toLowerCase().endsWith('.exe'));
+    if (asset) {
+      _downloadUrl = asset.browser_download_url;
+      const size = (asset.size / 1024 / 1024).toFixed(1);
+      document.getElementById('releaseInfo').textContent =
+        `Версия ${data.tag_name} • ${size} MB • ${new Date(data.published_at).toLocaleDateString('ru-RU')}`;
+    } else {
+      // No exe — use zipball or release page
+      _downloadUrl = data.html_url;
+      document.getElementById('releaseInfo').textContent =
+        `Версия ${data.tag_name} • ${new Date(data.published_at).toLocaleDateString('ru-RU')}`;
+    }
+  } catch(e) {
+    // Fallback to releases page
+    _downloadUrl = 'https://github.com/attacktrip/Fame/releases/latest';
+    document.getElementById('releaseInfo').textContent = 'Последний релиз на GitHub';
+  }
+}
+
+function downloadInstaller(e) {
+  e.preventDefault();
+  if (_downloadUrl) {
+    window.open(_downloadUrl, '_blank');
+  } else {
+    window.open('https://github.com/attacktrip/Fame/releases/latest', '_blank');
+  }
+}
+
 init();
+loadRelease();
 </script>
 </body>
 </html>
