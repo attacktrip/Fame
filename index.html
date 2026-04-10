@@ -87,8 +87,11 @@ footer a:hover{color:var(--accent)}
 </nav>
 
 <!-- AUTH MODAL (Войти / Регистрация) -->
-<div id="loginModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:center;justify-content:center" onclick="if(event.target===this)this.style.display='none'">
-  <div style="background:#13131a;border:1px solid rgba(255,255,255,.15);border-radius:14px;padding:28px;width:380px;max-width:95vw">
+<div id="loginModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:center;justify-content:center">
+  <div style="background:#13131a;border:1px solid rgba(255,255,255,.15);border-radius:14px;padding:28px;width:380px;max-width:95vw;position:relative">
+
+    <!-- Close button -->
+    <button onclick="document.getElementById('loginModal').style.display='none'" style="position:absolute;top:12px;right:14px;background:transparent;border:none;color:#8888a0;font-size:18px;cursor:pointer;line-height:1;padding:2px 6px" title="Закрыть">×</button>
 
     <!-- Tabs -->
     <div style="display:flex;gap:3px;margin-bottom:22px;background:rgba(0,0,0,.35);border-radius:9px;padding:3px">
@@ -104,8 +107,7 @@ footer a:hover{color:var(--accent)}
       </div>
       <div id="lErr" style="color:#f87171;font-size:12px;margin-top:8px;min-height:16px"></div>
       <div style="display:flex;gap:10px;margin-top:14px">
-        <button onclick="document.getElementById('loginModal').style.display='none'" style="flex:1;padding:10px;background:transparent;border:1px solid rgba(255,255,255,.14);border-radius:8px;color:#8888a0;cursor:pointer;font-size:13px">Отмена</button>
-        <button id="lBtn" onclick="doLogin()" style="flex:1;padding:10px;background:#7c6af7;border:none;border-radius:8px;color:#fff;font-weight:700;cursor:pointer;font-size:13px">Войти</button>
+        <button id="lBtn" onclick="doLogin()" style="width:100%;padding:10px;background:#7c6af7;border:none;border-radius:8px;color:#fff;font-weight:700;cursor:pointer;font-size:13px">Войти</button>
       </div>
     </div>
 
@@ -118,8 +120,7 @@ footer a:hover{color:var(--accent)}
       </div>
       <div id="rErr" style="color:#f87171;font-size:12px;margin-top:8px;min-height:16px"></div>
       <div style="display:flex;gap:10px;margin-top:14px">
-        <button onclick="document.getElementById('loginModal').style.display='none'" style="flex:1;padding:10px;background:transparent;border:1px solid rgba(255,255,255,.14);border-radius:8px;color:#8888a0;cursor:pointer;font-size:13px">Отмена</button>
-        <button id="rBtn" onclick="doRegister()" style="flex:1;padding:10px;background:#7c6af7;border:none;border-radius:8px;color:#fff;font-weight:700;cursor:pointer;font-size:13px">Создать аккаунт</button>
+        <button id="rBtn" onclick="doRegister()" style="width:100%;padding:10px;background:#7c6af7;border:none;border-radius:8px;color:#fff;font-weight:700;cursor:pointer;font-size:13px">Создать аккаунт</button>
       </div>
     </div>
 
@@ -203,6 +204,8 @@ async function doRegister() {
     <a class="btn-secondary" href="https://t.me/fameoftrip" target="_blank">Telegram</a>
   </div>
 </div>
+
+<script>
 // Update download link with latest release
 fetch('https://api.github.com/repos/attacktrip/Fame/releases/latest',{headers:{'Accept':'application/vnd.github+json'}})
   .then(r=>r.json()).then(d=>{
