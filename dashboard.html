@@ -112,7 +112,29 @@ nav{position:sticky;top:0;z-index:100;backdrop-filter:blur(20px);background:rgba
         <label>Никнейм в игре</label>
         <input type="text" id="nicknameInput" placeholder="Введи никнейм" maxlength="32">
       </div>
-      <button class="btn btn-primary btn-sm" onclick="saveNickname()">Сохранить</button>
+      <button class="btn btn-primary btn-sm" onclick="saveNickname()" style="margin-bottom:10px">Сохранить никнейм</button>
+
+      <!-- Change email -->
+      <div style="border-top:1px solid var(--border);padding-top:12px;margin-top:4px">
+        <div class="field-row">
+          <label>Новый Email</label>
+          <input type="email" id="newEmailInput" placeholder="new@example.com">
+        </div>
+        <button class="btn btn-sm" style="border:1px solid var(--border2);color:var(--dim);margin-bottom:10px" onclick="changeEmail()">Сменить Email</button>
+      </div>
+
+      <!-- Change password -->
+      <div style="border-top:1px solid var(--border);padding-top:12px;margin-top:4px">
+        <div class="field-row">
+          <label>Новый пароль</label>
+          <input type="password" id="newPassInput" placeholder="Минимум 6 символов">
+        </div>
+        <div class="field-row">
+          <label>Повтори пароль</label>
+          <input type="password" id="newPassConfirm" placeholder="Повтори пароль">
+        </div>
+        <button class="btn btn-sm" style="border:1px solid var(--border2);color:var(--dim)" onclick="changePassword()">Сменить пароль</button>
+      </div>
     </div>
 
     <div class="card">
@@ -125,7 +147,10 @@ nav{position:sticky;top:0;z-index:100;backdrop-filter:blur(20px);background:rgba
 
   <!-- SUBSCRIPTIONS -->
   <div class="card" style="margin-bottom:20px">
-    <div class="card-title">Мои подписки</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <div class="card-title" style="margin-bottom:0">Мои подписки</div>
+      <a href="index.html#pricing" class="btn btn-primary btn-sm">Купить подписку</a>
+    </div>
     <div id="subsContainer">
       <div class="loading-overlay"><div class="spinner"></div> Загрузка...</div>
     </div>
@@ -246,7 +271,6 @@ async function saveNickname() {
 
 async function resetHwid() {
   if (!confirm('Сбросить HWID? Следующий вход привяжет новый компьютер.')) return;
-  // Use authenticated request with user's own token
   const r = await fetch(SUPABASE_URL + `/rest/v1/profiles?user_id=eq.${session.user.id}`, {
     method: 'PATCH',
     headers: {
@@ -264,6 +288,51 @@ async function resetHwid() {
     const t = await r.text();
     toast('Ошибка сброса HWID: ' + r.status, false);
     console.error('resetHwid:', t);
+  }
+}
+
+async function changeEmail() {
+  const newEmail = document.getElementById('newEmailInput').value.trim();
+  if (!newEmail) { toast('Введи новый email', false); return; }
+  if (!newEmail.includes('@')) { toast('Некорректный email', false); return; }
+  const r = await fetch(SUPABASE_URL + '/auth/v1/user', {
+    method: 'PUT',
+    headers: { 'apikey': SUPABASE_ANON, 'Authorization': 'Bearer ' + session.access_token, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: newEmail })
+  });
+  const d = await r.json();
+  if (r.ok) {
+    toast('Email изменён. Подтверди на новой почте.');
+    document.getElementById('newEmailInput').value = '';
+    // Update profile email too
+    await fetch(SUPABASE_URL + `/rest/v1/profiles?user_id=eq.${session.user.id}`, {
+      method: 'PATCH',
+      headers: { 'apikey': SUPABASE_ANON, 'Authorization': 'Bearer ' + session.access_token, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ email: newEmail })
+    });
+  } else {
+    toast('Ошибка: ' + (d.msg || d.error_description || r.status), false);
+  }
+}
+
+async function changePassword() {
+  const p1 = document.getElementById('newPassInput').value;
+  const p2 = document.getElementById('newPassConfirm').value;
+  if (!p1) { toast('Введи новый пароль', false); return; }
+  if (p1.length < 6) { toast('Пароль минимум 6 символов', false); return; }
+  if (p1 !== p2) { toast('Пароли не совпадают', false); return; }
+  const r = await fetch(SUPABASE_URL + '/auth/v1/user', {
+    method: 'PUT',
+    headers: { 'apikey': SUPABASE_ANON, 'Authorization': 'Bearer ' + session.access_token, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ password: p1 })
+  });
+  if (r.ok) {
+    toast('Пароль изменён');
+    document.getElementById('newPassInput').value = '';
+    document.getElementById('newPassConfirm').value = '';
+  } else {
+    const d = await r.json();
+    toast('Ошибка: ' + (d.msg || d.error_description || r.status), false);
   }
 }
 
