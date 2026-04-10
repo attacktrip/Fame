@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Кабинет — Fame Client</title>
+<link rel="icon" href="assets/logo2.png">
+<style>
+:root{--bg:#0f0f11;--side:#0b0b0d;--card:#151519;--border:rgba(255,255,255,0.086);--text:#ebebf0;--dim:#82828c;--muted:#414147;--accent:#7c6af7;--accent2:#a78bfa;--hover:rgba(255,255,255,0.035);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;}
+.layout{display:flex;min-height:100vh;}
+.sidebar{width:220px;background:var(--side);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:20px 14px;flex-shrink:0;position:fixed;top:0;left:0;height:100vh;overflow-y:auto;}
+.sidebar-logo{display:flex;align-items:center;gap:10px;margin-bottom:28px;padding:0 4px;text-decoration:none;}
+.sidebar-logo img{height:30px;border-radius:6px;}
+.sidebar-logo span{font-size:15px;font-weight:600;color:var(--text);}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:7px;cursor:pointer;font-size:13px;color:var(--dim);transition:all .15s;margin-bottom:2px;border:none;background:none;width:100%;text-align:left;text-decoration:none;font-family:inherit;}
+.nav-item:hover{background:var(--hover);color:var(--text);}
+.nav-item.active{background:rgba(124,106,247,0.12);color:var(--text);border:1px solid rgba(124,106,247,0.2);}
+.nav-item .icon{font-size:15px;width:20px;text-align:center;flex-shrink:0;}
+.nav-sep{height:1px;background:var(--border);margin:8px 0;}
+.sidebar-bottom{margin-top:auto;padding-top:16px;}
+.user-mini{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;}
+.user-avatar{width:32px;height:32px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0;color:#fff;}
+.user-info{overflow:hidden;flex:1;}
+.user-nick{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.user-role{font-size:11px;color:var(--dim);}
+.main{margin-left:220px;flex:1;padding:32px;max-width:calc(100vw - 220px);}
+.page-title{font-size:22px;font-weight:700;margin-bottom:24px;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:20px;}
+.card-title{font-size:11px;color:var(--dim);margin-bottom:16px;text-transform:uppercase;letter-spacing:.06em;}
+.status-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px;margin-bottom:20px;}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;}
+.stat-label{font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;}
+.stat-value{font-size:20px;font-weight:700;}
+.stat-sub{font-size:12px;color:var(--dim);margin-top:4px;}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;}
+.badge.active{background:rgba(74,222,128,0.15);color:#4ade80;border:1px solid rgba(74,222,128,0.3);}
+.badge.inactive{background:rgba(248,113,113,0.15);color:#f87171;border:1px solid rgba(248,113,113,0.3);}
+.badge.admin{background:rgba(251,191,36,0.15);color:#fbbf24;border:1px solid rgba(251,191,36,0.3);}
+.hwid-box{background:#0f0f11;border:1px solid var(--border);border-radius:8px;padding:12px 16px;font-family:monospace;font-size:12px;color:var(--dim);display:flex;align-items:center;justify-content:space-between;gap:12px;word-break:break-all;}
+.copy-btn{background:none;border:1px solid var(--border);color:var(--dim);padding:5px 12px;border-radius:6px;font-size:12px;cursor:pointer;white-space:nowrap;transition:all .2s;font-family:inherit;}
+.copy-btn:hover{border-color:var(--accent);color:var(--text);}
+.action-btn{background:none;border:1px solid var(--border);color:var(--dim);padding:9px 18px;border-radius:7px;font-size:13px;cursor:pointer;transition:all .2s;font-family:inherit;}
+.action-btn:hover{border-color:rgba(124,106,247,0.5);color:var(--text);}
+.action-btn:disabled{opacity:.4;cursor:default;}
+.action-btn.danger:hover{border-color:rgba(248,113,113,0.5);color:#f87171;}
+.plans-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;}
+.plan-mini{border:1px solid var(--border);border-radius:10px;padding:20px;transition:all .2s;position:relative;}
+.plan-mini:hover{border-color:rgba(124,106,247,0.4);background:rgba(124,106,247,0.04);}
+.plan-mini.current{border-color:var(--accent);background:rgba(124,106,247,0.08);}
+.plan-mini-name{font-size:13px;font-weight:600;margin-bottom:4px;}
+.plan-mini-price{font-size:20px;font-weight:700;color:var(--accent);}
+.plan-mini-price span{font-size:12px;color:var(--dim);font-weight:400;}
+.plan-mini-desc{font-size:12px;color:var(--dim);margin-top:6px;}
+.current-tag{position:absolute;top:10px;right:10px;font-size:10px;background:var(--accent);color:#fff;padding:2px 8px;border-radius:10px;}
+.buy-btn{margin-top:14px;width:100%;padding:9px;background:var(--accent);color:#fff;border:none;border-radius:7px;font-size:13px;cursor:pointer;transition:opacity .2s;font-family:inherit;}
+.buy-btn:hover{opacity:.85;}
+.buy-btn:disabled{opacity:.4;cursor:default;}
+.page{display:none;}
+.page.active{display:block;}
+.logout-btn{width:100%;padding:9px 12px;background:none;border:1px solid var(--border);color:var(--dim);border-radius:7px;font-size:13px;cursor:pointer;transition:all .2s;margin-top:8px;font-family:inherit;}
+.logout-btn:hover{border-color:rgba(248,113,113,0.4);color:#f87171;}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 20px;font-size:13px;z-index:999;transform:translateY(80px);opacity:0;transition:all .3s;pointer-events:none;}
+.toast.show{transform:translateY(0);opacity:1;}
+/* ADMIN */
+.admin-table{width:100%;border-collapse:collapse;font-size:13px;}
+.admin-table th{text-align:left;padding:10px 12px;color:var(--dim);font-weight:500;border-bottom:1px solid var(--border);font-size:11px;text-transform:uppercase;letter-spacing:.05em;}
+.admin-table td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.04);vertical-align:middle;}
+.admin-table tr:last-child td{border-bottom:none;}
+.admin-table tr:hover td{background:var(--hover);}
+.form-group{margin-bottom:14px;}
+.form-group label{display:block;font-size:12px;color:var(--dim);margin-bottom:6px;}
+.form-group input,.form-group select{width:100%;background:#0f0f11;border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--text);font-size:13px;outline:none;transition:border-color .2s;font-family:inherit;}
+.form-group input:focus,.form-group select:focus{border-color:var(--accent);}
+.form-group select option{background:#0f0f11;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.submit-btn{padding:10px 22px;background:var(--accent);color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:500;cursor:pointer;transition:opacity .2s;font-family:inherit;}
+.submit-btn:hover{opacity:.85;}
+.submit-btn:disabled{opacity:.5;cursor:default;}
+.msg{font-size:13px;padding:10px 14px;border-radius:7px;margin-bottom:14px;display:none;}
+.msg.error{background:rgba(220,50,50,0.15);border:1px solid rgba(220,50,50,0.3);color:#f87171;}
+.msg.success{background:rgba(50,200,100,0.15);border:1px solid rgba(50,200,100,0.3);color:#4ade80;}
+.search-input{background:#0f0f11;border:1px solid var(--border);border-radius:7px;padding:8px 12px;color:var(--text);font-size:13px;outline:none;width:260px;font-family:inherit;}
+.search-input:focus{border-color:var(--accent);}
+</style>
+</head>
+<body>
+<div class="layout">
+  <div class="sidebar">
+    <a class="sidebar-logo" href="index.html">
+      <img src="assets/logo2.png" alt="Fame" onerror="this.style.display='none'">
+      <span>Fame Client</span>
+    </a>
+    <button class="nav-item active" onclick="showPage('home')" id="nav-home"><span class="icon">🏠</span> Главная</button>
+    <button class="nav-item" onclick="showPage('hwid')" id="nav-hwid"><span class="icon">🔒</span> HWID</button>
+    <button class="nav-item" onclick="showPage('subscription')" id="nav-subscription"><span class="icon">⭐</span> Подписка</button>
+    <button class="nav-item" onclick="showPage('download')" id="nav-download"><span class="icon">⬇️</span> Скачать</button>
+    <button class="nav-item" onclick="showPage('security')" id="nav-security"><span class="icon">🔑</span> Безопасность</button>
+    <div id="admin-nav-items" style="display:none;">
+      <div class="nav-sep"></div>
+      <button class="nav-item" onclick="showPage('admin')" id="nav-admin"><span class="icon">👑</span> Админ панель</button>
+    </div>
+    <div class="sidebar-bottom">
+      <div class="user-mini">
+        <div class="user-avatar" id="avatar-letter">?</div>
+        <div class="user-info">
+          <div class="user-nick" id="sidebar-nick">Загрузка...</div>
+          <div class="user-role" id="sidebar-plan">—</div>
+        </div>
+      </div>
+      <button class="logout-btn" onclick="logout()">Выйти</button>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <!-- HOME -->
+    <div class="page active" id="page-home">
+      <div class="page-title">Главная</div>
+      <div class="status-grid">
+        <div class="stat-card">
+          <div class="stat-label">Подписка</div>
+          <div class="stat-value" id="home-sub-badge"><span class="badge inactive">Нет</span></div>
+          <div class="stat-sub" id="home-sub-expires">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Никнейм</div>
+          <div class="stat-value" id="home-nick" style="font-size:17px">—</div>
+          <div class="stat-sub" id="home-email">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">HWID</div>
+          <div class="stat-value" id="home-hwid" style="font-size:13px;font-family:monospace">—</div>
+          <div class="stat-sub" id="home-hwid-status">Не привязан</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Быстрые действия</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="action-btn" onclick="showPage('subscription')">⭐ Купить подписку</button>
+          <button class="action-btn" onclick="showPage('hwid')">🔒 Управление HWID</button>
+          <button class="action-btn" id="download-btn" onclick="showPage('download')" style="background:rgba(124,106,247,0.12);border-color:rgba(124,106,247,0.3);color:var(--text);">⬇️ Скачать клиент</button>
+          <a href="https://t.me/famesupp" target="_blank" class="action-btn" style="text-decoration:none;">💬 Поддержка</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- HWID -->
+    <div class="page" id="page-hwid">
+      <div class="page-title">HWID</div>
+      <div class="card">
+        <div class="card-title">Привязанный HWID</div>
+        <p style="font-size:13px;color:var(--dim);margin-bottom:18px;line-height:1.6;">HWID — уникальный идентификатор твоего ПК. Лаунчер привязывает его автоматически при первом входе. Сброс доступен раз в 30 дней.</p>
+        <div class="hwid-box" style="margin-bottom:16px;">
+          <span id="hwid-display">Не привязан</span>
+          <button class="copy-btn" onclick="copyHwid()">Копировать</button>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+          <button class="action-btn danger" onclick="resetHwid()" id="reset-hwid-btn">🔄 Сбросить HWID</button>
+          <span style="font-size:12px;color:var(--dim);" id="hwid-reset-info">Проверка...</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Как работает</div>
+        <div style="font-size:13px;color:var(--dim);line-height:1.9;">
+          <div>1. Скачай и запусти лаунчер Fame Client</div>
+          <div>2. Войди в аккаунт в лаунчере</div>
+          <div>3. HWID привяжется автоматически при первом запуске</div>
+          <div>4. Если сменил ПК — сбрось HWID здесь (раз в 30 дней)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUBSCRIPTION -->
+    <div class="page" id="page-subscription">
+      <div class="page-title">Подписка</div>
+      <div class="card" id="current-sub-card">
+        <div class="card-title">Текущая подписка</div>
+        <div id="current-sub-info" style="font-size:13px;color:var(--dim);">Загрузка...</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Доступные планы</div>
+        <div class="plans-row" id="plans-row">
+          <div class="plan-mini" id="plan-basic">
+            <div class="plan-mini-name">Базовый</div>
+            <div class="plan-mini-price">199 <span>₽/мес</span></div>
+            <div class="plan-mini-desc">Базовые модули, Simple Aura, 1 HWID</div>
+            <button class="buy-btn" onclick="buyPlan('basic','199')">Купить</button>
+          </div>
+          <div class="plan-mini" id="plan-premium">
+            <div class="plan-mini-name">Премиум</div>
+            <div class="plan-mini-price">399 <span>₽/мес</span></div>
+            <div class="plan-mini-desc">Все модули, все режимы Aura, Neuro</div>
+            <button class="buy-btn" onclick="buyPlan('premium','399')">Купить</button>
+          </div>
+          <div class="plan-mini" id="plan-lifetime">
+            <div class="plan-mini-name">Навсегда</div>
+            <div class="plan-mini-price">1499 <span>₽</span></div>
+            <div class="plan-mini-desc">Всё из Премиум, 2 HWID, навсегда</div>
+            <button class="buy-btn" onclick="buyPlan('lifetime','1499')">Купить</button>
+          </div>
+        </div>
+        <p style="font-size:12px;color:var(--muted);margin-top:16px;">После оплаты напиши в <a href="https://t.me/famesupp" style="color:var(--accent);">Telegram</a> с чеком — активируем вручную.</p>
+      </div>
+    </div>
+
+    <!-- SECURITY -->
+    <div class="page" id="page-security">
+      <div class="page-title">Безопасность</div>
+
+      <div class="card">
+        <div class="card-title">Смена пароля</div>
+        <div class="msg" id="pw-msg"></div>
+        <div class="form-group"><label>Новый пароль</label><input type="password" id="pw-new" placeholder="Минимум 6 символов" autocomplete="new-password"></div>
+        <div class="form-group"><label>Повтори пароль</label><input type="password" id="pw-confirm" placeholder="Повтори новый пароль" autocomplete="new-password"></div>
+        <button class="submit-btn" onclick="changePassword()">Сменить пароль</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Email</div>
+        <div style="font-size:13px;color:var(--dim);margin-bottom:12px;" id="security-email">—</div>
+        <p style="font-size:12px;color:var(--muted);">Для смены email напиши в <a href="https://t.me/famesupp" style="color:var(--accent);">поддержку</a>.</p>
+      </div>
+    </div>
+
+    <!-- DOWNLOAD -->
+    <div class="page" id="page-download">
+      <div class="page-title">Скачать клиент</div>
+
+      <div class="card" id="download-status-card">
+        <div class="card-title">Статус доступа</div>
+        <div id="download-access-info" style="font-size:13px;color:var(--dim);">Проверка подписки...</div>
+      </div>
+
+      <div class="card" id="download-card">
+        <div class="card-title">Fame Client Installer</div>
+        <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
+          <div style="flex:1;min-width:200px;">
+            <div style="font-size:15px;font-weight:600;margin-bottom:6px;">FameInstaller.exe</div>
+            <div style="font-size:13px;color:var(--dim);line-height:1.6;margin-bottom:16px;">
+              Устанавливает Fame Client на твой ПК. Включает лаунчер с авторизацией и проверкой подписки.<br>
+              <span style="color:var(--muted);font-size:12px;">Требуется Java 17+</span>
+            </div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+              <a id="installer-download-btn" href="#" onclick="downloadInstaller();return false;"
+                style="display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:#fff;text-decoration:none;padding:11px 22px;border-radius:8px;font-size:14px;font-weight:500;transition:opacity .2s;"
+                onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+                ⬇️ Скачать установщик
+              </a>
+              <a href="https://adoptium.net" target="_blank"
+                style="display:inline-flex;align-items:center;gap:8px;background:transparent;color:var(--dim);text-decoration:none;padding:10px 18px;border-radius:8px;font-size:13px;border:1px solid var(--border);transition:all .2s;"
+                onmouseover="this.style.borderColor='rgba(255,255,255,0.2)';this.style.color='var(--text)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--dim)'">
+                ☕ Скачать Java 17
+              </a>
+            </div>
+          </div>
+          <div style="background:#0f0f11;border:1px solid var(--border);border-radius:10px;padding:16px 20px;min-width:180px;">
+            <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">Что включено</div>
+            <div style="font-size:13px;color:var(--dim);line-height:2;">
+              <div>✓ Лаунчер с авторизацией</div>
+              <div>✓ Проверка HWID</div>
+              <div>✓ Проверка подписки</div>
+              <div>✓ Ярлык на рабочем столе</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Инструкция по установке</div>
+        <div style="font-size:13px;color:var(--dim);line-height:2;">
+          <div>1. Убедись что установлена <a href="https://adoptium.net" target="_blank" style="color:var(--accent);">Java 17+</a></div>
+          <div>2. Скачай и запусти <strong style="color:var(--text);">FameInstaller.exe</strong></div>
+          <div>3. Выбери папку установки (по умолчанию <code style="background:#0f0f11;padding:1px 6px;border-radius:4px;">C:\Fame</code>)</div>
+          <div>4. Нажми <strong style="color:var(--text);">Install Fame Client</strong></div>
+          <div>5. После установки запусти <strong style="color:var(--text);">Fame Client</strong> с рабочего стола</div>
+          <div>6. Войди в лаунчере с этим же аккаунтом</div>
+        </div>
+      </div>
+
+      <div class="card" id="no-sub-card" style="display:none;">
+        <div class="card-title">Нет активной подписки</div>
+        <p style="font-size:13px;color:var(--dim);margin-bottom:16px;">Для скачивания и использования клиента нужна активная подписка.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="action-btn" onclick="showPage('subscription')" style="background:rgba(124,106,247,0.12);border-color:rgba(124,106,247,0.3);color:var(--text);">⭐ Купить подписку</button>
+          <a href="https://t.me/famesupp" target="_blank" class="action-btn" style="text-decoration:none;">💬 Написать в поддержку</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADMIN -->
+    <div class="page" id="page-admin">
+      <div class="page-title">Админ панель <span class="badge admin" style="font-size:12px;vertical-align:middle;">triplfame</span></div>
+
+      <!-- Give subscription -->
+      <div class="card">
+        <div class="card-title">Выдать / изменить подписку</div>
+        <div class="msg" id="admin-sub-msg"></div>
+        <div class="form-row">
+          <div class="form-group"><label>Email пользователя</label><input type="email" id="admin-email" placeholder="user@example.com"></div>
+          <div class="form-group"><label>План</label>
+            <select id="admin-plan">
+              <option value="none">Нет (отозвать)</option>
+              <option value="basic">Базовый</option>
+              <option value="premium">Премиум</option>
+              <option value="lifetime">Навсегда</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Дата окончания (для basic/premium)</label><input type="date" id="admin-expires"></div>
+          <div class="form-group" style="display:flex;align-items:flex-end;">
+            <button class="submit-btn" id="admin-sub-btn" onclick="adminGiveSub()">Применить</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reset HWID -->
+      <div class="card">
+        <div class="card-title">Сбросить HWID пользователя</div>
+        <div class="msg" id="admin-hwid-msg"></div>
+        <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">
+          <div class="form-group" style="margin:0;flex:1;min-width:200px;"><label>Email пользователя</label><input type="email" id="admin-hwid-email" placeholder="user@example.com"></div>
+          <button class="submit-btn" onclick="adminResetHwid()">Сбросить HWID</button>
+        </div>
+      </div>
+
+      <!-- Users table -->
+      <div class="card">
+        <div class="card-title" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+          <span>Пользователи</span>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <input class="search-input" type="text" id="user-search" placeholder="Поиск по email..." oninput="filterUsers()">
+            <button class="action-btn" onclick="loadUsers()">↻ Обновить</button>
+          </div>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="admin-table">
+            <thead><tr><th>Никнейм</th><th>Email</th><th>План</th><th>Истекает</th><th>HWID</th><th>Действия</th></tr></thead>
+            <tbody id="users-tbody"><tr><td colspan="6" style="color:var(--dim);text-align:center;padding:20px;">Загрузка...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="assets/config.js"></script>
+<script>
+const ADMIN_NICKNAME = 'triplfame';
+const PLAN_NAMES = {none:'Нет',basic:'Базовый',premium:'Премиум',lifetime:'Навсегда'};
+
+// ─── AUTH CHECK ───────────────────────────────────────────
+const _tokenInit = localStorage.getItem('fame_token');
+const userRaw = localStorage.getItem('fame_user');
+if (!_tokenInit || !userRaw) { window.location.href = 'index.html'; }
+const user = JSON.parse(userRaw || '{}');
+
+// ─── TOKEN REFRESH ────────────────────────────────────────
+// Supabase tokens expire in 1 hour — auto-refresh on 401
+let token = localStorage.getItem('fame_token');
+
+async function refreshToken() {
+  const refresh = localStorage.getItem('fame_refresh');
+  if (!refresh) { logout(); return false; }
+  try {
+    const r = await fetch(SUPABASE_URL + '/auth/v1/token?grant_type=refresh_token', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json','apikey':SUPABASE_ANON},
+      body: JSON.stringify({refresh_token: refresh})
+    });
+    const data = await r.json();
+    if (data.access_token) {
+      token = data.access_token;
+      localStorage.setItem('fame_token', token);
+      localStorage.setItem('fame_refresh', data.refresh_token || refresh);
+      localStorage.setItem('fame_user', JSON.stringify(data.user));
+      return true;
+    }
+  } catch(e) {}
+  logout();
+  return false;
+}
+
+async function fetchWithAuth(url, opts = {}) {
+  opts.headers = opts.headers || {};
+  opts.headers['apikey'] = SUPABASE_ANON;
+  opts.headers['Authorization'] = 'Bearer ' + token;
+  let r = await fetch(url, opts);
+  if (r.status === 401) {
+    const ok = await refreshToken();
+    if (!ok) return null;
+    opts.headers['Authorization'] = 'Bearer ' + token;
+    r = await fetch(url, opts);
+  }
+  return r;
+}
+
+// ─── SUPABASE HELPERS ─────────────────────────────────────
+async function sbGet(path) {
+  const r = await fetchWithAuth(SUPABASE_URL + path);
+  if (!r) return [];
+  return r.json();
+}
+async function sbPost(path, body) {
+  const r = await fetchWithAuth(SUPABASE_URL + path, {
+    method: 'POST',
+    headers: {'Content-Type':'application/json','Prefer':'return=representation'},
+    body: JSON.stringify(body)
+  });
+  if (!r) return {};
+  return r.json();
+}
+async function sbPatch(path, body) {
+  const r = await fetchWithAuth(SUPABASE_URL + path, {
+    method: 'PATCH',
+    headers: {'Content-Type':'application/json','Prefer':'return=representation'},
+    body: JSON.stringify(body)
+  });
+  if (!r) return {};
+  return r.json();
+}
+// Admin uses service role key for cross-user operations
+async function sbAdminPatch(path, body) {
+  const r = await fetch(SUPABASE_URL + path, {
+    method: 'PATCH',
+    headers: {'Content-Type':'application/json','apikey':SUPABASE_SERVICE,'Authorization':'Bearer '+SUPABASE_SERVICE,'Prefer':'return=representation'},
+    body: JSON.stringify(body)
+  });
+  return r.json();
+}
+async function sbAdminGet(path) {
+  const r = await fetch(SUPABASE_URL + path, {
+    headers: {'apikey':SUPABASE_SERVICE,'Authorization':'Bearer '+SUPABASE_SERVICE}
+  });
+  return r.json();
+}
+
+// ─── LOAD USER DATA ───────────────────────────────────────
+let userData = null;
+let isAdmin = false;
+let allUsers = [];
+
+async function loadData() {
+  const nick = user.user_metadata?.nickname || user.email?.split('@')[0] || 'User';
+  isAdmin = nick.toLowerCase() === ADMIN_NICKNAME.toLowerCase();
+
+  document.getElementById('avatar-letter').textContent = nick[0].toUpperCase();
+  document.getElementById('sidebar-nick').textContent = nick;
+  document.getElementById('home-nick').textContent = nick;
+  document.getElementById('home-email').textContent = user.email || '';
+
+  if (isAdmin) {
+    document.getElementById('admin-nav-items').style.display = 'block';
+    document.getElementById('sidebar-plan').textContent = '👑 Владелец';
+  }
+
+  const data = await sbGet(`/rest/v1/profiles?user_id=eq.${user.id}&select=*`);
+  if (Array.isArray(data) && data.length > 0) {
+    userData = data[0];
+  } else {
+    const created = await sbPost('/rest/v1/profiles', {
+      user_id: user.id, nickname: nick, email: user.email,
+      plan: isAdmin ? 'lifetime' : 'none',
+      hwid: null, hwid_reset_at: null, sub_expires: null
+    });
+    userData = Array.isArray(created) ? created[0] : {plan: isAdmin?'lifetime':'none', hwid:null};
+  }
+  renderUserData();
+  if (isAdmin) loadUsers();
+}
+
+function renderUserData() {
+  if (!userData) return;
+  const plan = userData.plan || 'none';
+  const hwid = userData.hwid;
+  const expires = userData.sub_expires;
+  const isActive = plan === 'lifetime' || (plan !== 'none' && expires && new Date(expires) > new Date());
+
+  if (!isAdmin) {
+    document.getElementById('sidebar-plan').textContent = PLAN_NAMES[plan] || plan;
+  }
+
+  // Home page
+  const badge = isActive
+    ? `<span class="badge active">${PLAN_NAMES[plan]}</span>`
+    : `<span class="badge inactive">Нет</span>`;
+  document.getElementById('home-sub-badge').innerHTML = badge;
+  document.getElementById('home-sub-expires').textContent = plan === 'lifetime' ? 'Навсегда' : (expires ? 'До: ' + new Date(expires).toLocaleDateString('ru-RU') : 'Нет подписки');
+  document.getElementById('home-hwid').textContent = hwid ? hwid.substring(0,16)+'...' : 'Не привязан';
+  document.getElementById('home-hwid-status').textContent = hwid ? 'Привязан' : 'Не привязан';
+
+  // HWID page
+  document.getElementById('hwid-display').textContent = hwid || 'Не привязан';
+  const resetAt = userData.hwid_reset_at;
+  if (resetAt) {
+    const next = new Date(resetAt); next.setDate(next.getDate() + 30);
+    const canReset = new Date() > next;
+    document.getElementById('hwid-reset-info').textContent = canReset ? 'Сброс доступен' : 'Следующий сброс: ' + next.toLocaleDateString('ru-RU');
+    document.getElementById('reset-hwid-btn').disabled = !canReset;
+  } else {
+    document.getElementById('hwid-reset-info').textContent = 'Сброс доступен';
+    document.getElementById('reset-hwid-btn').disabled = false;
+  }
+
+  // Subscription page
+  const subInfo = document.getElementById('current-sub-info');
+  if (isActive) {
+    subInfo.innerHTML = `${badge} &nbsp; <strong>${PLAN_NAMES[plan]}</strong> &nbsp; ${plan==='lifetime'?'· навсегда':'· до '+new Date(expires).toLocaleDateString('ru-RU')}`;
+    document.querySelectorAll('.plan-mini').forEach(el => { el.classList.remove('current'); const t=el.querySelector('.current-tag'); if(t)t.remove(); const b=el.querySelector('.buy-btn'); if(b){b.disabled=false;b.textContent='Купить';} });
+    const cur = document.getElementById('plan-' + plan);
+    if (cur) {
+      cur.classList.add('current');
+      if (!cur.querySelector('.current-tag')) { const t=document.createElement('div'); t.className='current-tag'; t.textContent='Текущий'; cur.appendChild(t); }
+      const b = cur.querySelector('.buy-btn'); if(b){b.disabled=true;b.textContent='Активен';}
+    }
+  } else {
+    subInfo.innerHTML = `<span class="badge inactive">Нет подписки</span> &nbsp; Купи план ниже чтобы начать играть.`;
+  }
+  // Update download page too
+  renderDownloadPage();
+}
+
+// ─── HWID ─────────────────────────────────────────────────
+function copyHwid() {
+  const hwid = userData?.hwid;
+  if (!hwid) return toast('HWID не привязан');
+  navigator.clipboard.writeText(hwid).then(() => toast('HWID скопирован')).catch(() => toast('Не удалось скопировать'));
+}
+
+async function resetHwid() {
+  if (!confirm('Сбросить HWID? Лаунчер привяжет новый при следующем запуске.')) return;
+  document.getElementById('reset-hwid-btn').disabled = true;
+  const res = await sbPatch(`/rest/v1/profiles?user_id=eq.${user.id}`, {hwid: null, hwid_reset_at: new Date().toISOString()});
+  if (Array.isArray(res) && res.length > 0) { userData = res[0]; renderUserData(); toast('HWID сброшен'); }
+  else { toast('Ошибка сброса'); document.getElementById('reset-hwid-btn').disabled = false; }
+}
+
+// ─── BUY ──────────────────────────────────────────────────
+function buyPlan(plan, price) {
+  const msg = encodeURIComponent(`Хочу купить подписку Fame Client\nПлан: ${PLAN_NAMES[plan]} (${price}₽)\nEmail: ${user.email||'—'}`);
+  window.open(`https://t.me/famesupp?text=${msg}`, '_blank');
+}
+
+// ─── CHANGE PASSWORD ──────────────────────────────────────
+async function changePassword() {
+  const pw  = document.getElementById('pw-new').value;
+  const pw2 = document.getElementById('pw-confirm').value;
+  const msg = document.getElementById('pw-msg');
+
+  msg.style.display = 'none';
+  if (!pw || pw.length < 6) { showPwMsg('Пароль минимум 6 символов', 'error'); return; }
+  if (pw !== pw2)            { showPwMsg('Пароли не совпадают', 'error'); return; }
+
+  try {
+    const r = await fetchWithAuth(SUPABASE_URL + '/auth/v1/user', {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ password: pw })
+    });
+    if (!r) { showPwMsg('Ошибка авторизации', 'error'); return; }
+    const data = await r.json();
+    if (data.id || data.email) {
+      showPwMsg('Пароль успешно изменён', 'success');
+      document.getElementById('pw-new').value = '';
+      document.getElementById('pw-confirm').value = '';
+    } else {
+      showPwMsg(data.error_description || data.msg || 'Ошибка смены пароля', 'error');
+    }
+  } catch(e) { showPwMsg('Ошибка: ' + e.message, 'error'); }
+}
+
+function showPwMsg(text, type) {
+  const el = document.getElementById('pw-msg');
+  el.textContent = text;
+  el.className = 'msg ' + type;
+  el.style.display = 'block';
+  setTimeout(() => el.style.display = 'none', 4000);
+}
+
+// ─── DOWNLOAD ─────────────────────────────────────────────
+// INSTALLER_URL — замени на прямую ссылку на FameInstaller.exe после загрузки в GitHub Releases
+const INSTALLER_URL = 'https://github.com/attacktrip/Fame/releases/latest/download/FameInstaller.exe';
+
+function renderDownloadPage() {
+  if (!userData) return;
+  const plan = userData.plan || 'none';
+  const expires = userData.sub_expires;
+  const isActive = plan === 'lifetime' || (plan !== 'none' && expires && new Date(expires) > new Date());
+  const accessInfo = document.getElementById('download-access-info');
+  const downloadCard = document.getElementById('download-card');
+  const noSubCard = document.getElementById('no-sub-card');
+
+  if (isActive) {
+    accessInfo.innerHTML = `<span class="badge active">${PLAN_NAMES[plan]}</span> &nbsp; Скачивание доступно`;
+    downloadCard.style.display = 'block';
+    noSubCard.style.display = 'none';
+  } else {
+    accessInfo.innerHTML = `<span class="badge inactive">Нет подписки</span> &nbsp; Купи подписку чтобы скачать клиент`;
+    downloadCard.style.display = 'none';
+    noSubCard.style.display = 'block';
+  }
+}
+
+function downloadInstaller() {
+  if (!userData) return;
+  const plan = userData.plan || 'none';
+  const expires = userData.sub_expires;
+  const isActive = plan === 'lifetime' || (plan !== 'none' && expires && new Date(expires) > new Date());
+  if (!isActive) { toast('Нет активной подписки'); showPage('subscription'); return; }
+  window.location.href = INSTALLER_URL;
+  toast('Скачивание началось...');
+}
+
+// ─── ADMIN: GIVE SUB ──────────────────────────────────────
+async function adminGiveSub() {
+  if (!isAdmin) return;
+  const email = document.getElementById('admin-email').value.trim();
+  const plan = document.getElementById('admin-plan').value;
+  const expires = document.getElementById('admin-expires').value;
+  if (!email) return showAdminMsg('admin-sub-msg', 'Введи email', 'error');
+  if ((plan === 'basic' || plan === 'premium') && !expires) return showAdminMsg('admin-sub-msg', 'Укажи дату окончания', 'error');
+
+  const btn = document.getElementById('admin-sub-btn'); btn.disabled = true; btn.textContent = 'Применяем...';
+  const patchData = { plan, sub_expires: plan === 'lifetime' ? null : (expires ? new Date(expires).toISOString() : null) };
+  if (plan === 'none') patchData.sub_expires = null;
+
+  const res = await sbAdminPatch(`/rest/v1/profiles?email=eq.${encodeURIComponent(email)}`, patchData);
+  btn.disabled = false; btn.textContent = 'Применить';
+  if (Array.isArray(res) && res.length > 0) {
+    showAdminMsg('admin-sub-msg', `Подписка "${PLAN_NAMES[plan]}" выдана для ${email}`, 'success');
+    loadUsers();
+  } else {
+    showAdminMsg('admin-sub-msg', 'Пользователь не найден или ошибка', 'error');
+  }
+}
+
+// ─── ADMIN: RESET HWID ────────────────────────────────────
+async function adminResetHwid() {
+  if (!isAdmin) return;
+  const email = document.getElementById('admin-hwid-email').value.trim();
+  if (!email) return showAdminMsg('admin-hwid-msg', 'Введи email', 'error');
+  const res = await sbAdminPatch(`/rest/v1/profiles?email=eq.${encodeURIComponent(email)}`, {hwid: null, hwid_reset_at: null});
+  if (Array.isArray(res) && res.length > 0) { showAdminMsg('admin-hwid-msg', `HWID сброшен для ${email}`, 'success'); loadUsers(); }
+  else showAdminMsg('admin-hwid-msg', 'Пользователь не найден', 'error');
+}
+
+// ─── ADMIN: LOAD USERS ────────────────────────────────────
+async function loadUsers() {
+  if (!isAdmin) return;
+  const data = await sbAdminGet('/rest/v1/profiles?select=*&order=created_at.desc&limit=200');
+  allUsers = Array.isArray(data) ? data : [];
+  renderUsers(allUsers);
+}
+
+function filterUsers() {
+  const q = document.getElementById('user-search').value.toLowerCase();
+  renderUsers(allUsers.filter(u => (u.email||'').toLowerCase().includes(q) || (u.nickname||'').toLowerCase().includes(q)));
+}
+
+function renderUsers(users) {
+  const tbody = document.getElementById('users-tbody');
+  if (!users.length) { tbody.innerHTML = '<tr><td colspan="6" style="color:var(--dim);text-align:center;padding:20px;">Нет пользователей</td></tr>'; return; }
+  tbody.innerHTML = users.map(u => {
+    const plan = u.plan || 'none';
+    const isActive = plan === 'lifetime' || (plan !== 'none' && u.sub_expires && new Date(u.sub_expires) > new Date());
+    const planBadge = isActive ? `<span class="badge active">${PLAN_NAMES[plan]||plan}</span>` : `<span class="badge inactive">Нет</span>`;
+    const expires = u.sub_expires ? new Date(u.sub_expires).toLocaleDateString('ru-RU') : (plan==='lifetime'?'Навсегда':'—');
+    const hwid = u.hwid ? `<span style="font-family:monospace;font-size:11px;">${u.hwid.substring(0,12)}...</span>` : '<span style="color:var(--muted);">—</span>';
+    return `<tr>
+      <td>${u.nickname||'—'}</td>
+      <td style="color:var(--dim);">${u.email||'—'}</td>
+      <td>${planBadge}</td>
+      <td style="color:var(--dim);font-size:12px;">${expires}</td>
+      <td>${hwid}</td>
+      <td><button class="copy-btn" onclick="quickResetHwid('${u.email}')">Сброс HWID</button></td>
+    </tr>`;
+  }).join('');
+}
+
+async function quickResetHwid(email) {
+  if (!confirm(`Сбросить HWID для ${email}?`)) return;
+  const res = await sbAdminPatch(`/rest/v1/profiles?email=eq.${encodeURIComponent(email)}`, {hwid: null, hwid_reset_at: null});
+  if (Array.isArray(res) && res.length > 0) { toast('HWID сброшен'); loadUsers(); }
+  else toast('Ошибка');
+}
+
+function showAdminMsg(id, text, type) {
+  const el = document.getElementById(id);
+  el.textContent = text; el.className = 'msg ' + type; el.style.display = 'block';
+  setTimeout(() => el.style.display = 'none', 4000);
+}
+
+// ─── NAVIGATION ───────────────────────────────────────────
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  const navEl = document.getElementById('nav-' + name);
+  if (navEl) navEl.classList.add('active');
+}
+
+// ─── LOGOUT ───────────────────────────────────────────────
+function logout() {
+  localStorage.removeItem('fame_token');
+  localStorage.removeItem('fame_refresh');
+  localStorage.removeItem('fame_user');
+  window.location.href = 'index.html';
+}
+
+// ─── TOAST ────────────────────────────────────────────────
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2500);
+}
+
+// ─── INIT ─────────────────────────────────────────────────
+loadData();
+</script>
+</body>
+</html>
