@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
@@ -239,11 +239,17 @@ async function resetHwid() {
 }
 
 async function init() {
-  // Load session from localStorage (set by login page)
   const raw = localStorage.getItem('fame_session');
-  if (!raw) { window.location.href = 'index.html'; return; }
-  try { session = JSON.parse(raw); } catch { window.location.href = 'index.html'; return; }
-  if (!session?.access_token) { window.location.href = 'index.html'; return; }
+  if (!raw) {
+    // Show inline login instead of redirect
+    showDashboardLogin(); return;
+  }
+  try { session = JSON.parse(raw); } catch {
+    showDashboardLogin(); return;
+  }
+  if (!session?.access_token) {
+    showDashboardLogin(); return;
+  }
 
   const email = session.user?.email || '';
   document.getElementById('profileEmail').textContent = email;
@@ -258,6 +264,49 @@ async function init() {
   document.getElementById('hwidBox').textContent = profile?.hwid || 'Не привязан';
 
   renderSubs(subs);
+}
+
+function showDashboardLogin() {
+  document.querySelector('.container').innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:center;min-height:60vh">
+      <div style="background:var(--card);border:1px solid var(--border2);border-radius:14px;padding:36px;width:360px;max-width:95vw">
+        <h2 style="font-size:20px;font-weight:800;margin-bottom:6px">Войти в кабинет</h2>
+        <p style="font-size:13px;color:var(--dim);margin-bottom:20px">Введи данные от аккаунта Fame Client</p>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <input id="dEmail" type="email" placeholder="Email" style="background:rgba(0,0,0,.4);border:1px solid var(--border2);border-radius:7px;padding:10px 14px;color:var(--text);font-size:13px;outline:none">
+          <input id="dPass" type="password" placeholder="Пароль" style="background:rgba(0,0,0,.4);border:1px solid var(--border2);border-radius:7px;padding:10px 14px;color:var(--text);font-size:13px;outline:none" onkeydown="if(event.key==='Enter')doDashLogin()">
+        </div>
+        <div id="dErr" style="color:var(--red);font-size:12px;margin-top:8px;min-height:16px"></div>
+        <button id="dBtn" onclick="doDashLogin()" style="width:100%;margin-top:14px;padding:12px;background:var(--accent);border:none;border-radius:8px;color:#fff;font-weight:700;cursor:pointer;font-size:14px">Войти</button>
+      </div>
+    </div>`;
+}
+
+async function doDashLogin() {
+  const email = document.getElementById('dEmail').value.trim();
+  const pass  = document.getElementById('dPass').value;
+  const err   = document.getElementById('dErr');
+  const btn   = document.getElementById('dBtn');
+  err.textContent = '';
+  if (!email || !pass) { err.textContent = 'Заполни все поля'; return; }
+  btn.textContent = 'Входим...'; btn.disabled = true;
+  try {
+    const r = await fetch(SUPABASE_URL + '/auth/v1/token?grant_type=password', {
+      method: 'POST',
+      headers: { 'apikey': SUPABASE_ANON, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password: pass })
+    });
+    const d = await r.json();
+    if (!d.access_token) {
+      err.textContent = d.error_description || d.msg || 'Неверный email или пароль';
+      btn.textContent = 'Войти'; btn.disabled = false; return;
+    }
+    localStorage.setItem('fame_session', JSON.stringify(d));
+    window.location.reload();
+  } catch(e) {
+    err.textContent = 'Ошибка соединения';
+    btn.textContent = 'Войти'; btn.disabled = false;
+  }
 }
 
 init();
