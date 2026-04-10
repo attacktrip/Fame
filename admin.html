@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fame Client — Admin</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0a0c;--card:#13131a;--card2:#1a1a24;
+  --border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.14);
+  --text:#e8e8f0;--dim:#8888a0;--muted:#44445a;
+  --accent:#7c6af7;--green:#4ade80;--red:#f87171;--gold:#f59e0b;--orange:#fb923c;
+}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 50% -5%,rgba(124,106,247,.12),transparent);pointer-events:none;z-index:0}
+
+nav{position:sticky;top:0;z-index:100;backdrop-filter:blur(20px);background:rgba(10,10,12,.9);border-bottom:1px solid var(--border);padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:52px}
+.nav-logo{font-weight:700;font-size:16px;color:var(--text)}
+.nav-logo span{color:var(--accent)}
+.nav-badge{background:rgba(251,146,60,.15);color:var(--orange);border:1px solid rgba(251,146,60,.3);font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-left:8px}
+.nav-right{display:flex;align-items:center;gap:12px;font-size:13px;color:var(--dim)}
+.logout-btn{background:transparent;border:1px solid var(--border2);color:var(--dim);padding:5px 12px;border-radius:6px;font-size:12px;cursor:pointer;transition:all .2s}
+.logout-btn:hover{border-color:var(--red);color:var(--red)}
+
+.container{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:28px 20px}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px}
+.stat-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
+.stat-value{font-size:28px;font-weight:800}
+.stat-sub{font-size:11px;color:var(--dim);margin-top:2px}
+
+/* TABS */
+.tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:1px solid var(--border);padding-bottom:0}
+.tab{padding:9px 18px;font-size:13px;font-weight:600;color:var(--dim);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab:hover:not(.active){color:var(--text)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* TABLE */
+.table-wrap{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.table-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)}
+.table-header h3{font-size:14px;font-weight:700}
+.search-box{background:rgba(0,0,0,.3);border:1px solid var(--border2);border-radius:7px;padding:7px 12px;color:var(--text);font-size:13px;outline:none;width:220px;transition:border-color .2s}
+.search-box:focus{border-color:var(--accent)}
+table{width:100%;border-collapse:collapse}
+th{padding:10px 16px;text-align:left;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border)}
+td{padding:12px 16px;font-size:13px;border-bottom:1px solid rgba(255,255,255,.04)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.02)}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700}
+.badge-active{background:rgba(74,222,128,.15);color:var(--green)}
+.badge-expired{background:rgba(68,68,90,.3);color:var(--muted)}
+.badge-lifetime{background:rgba(245,158,11,.15);color:var(--gold)}
+.badge-165{background:rgba(124,106,247,.15);color:var(--accent)}
+.badge-214{background:rgba(167,139,250,.15);color:#a78bfa}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all .2s}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{opacity:.85}
+.btn-danger{background:transparent;border:1px solid var(--red);color:var(--red)}
+.btn-danger:hover{background:rgba(248,113,113,.1)}
+.btn-success{background:transparent;border:1px solid var(--green);color:var(--green)}
+.btn-success:hover{background:rgba(74,222,128,.1)}
+.btn-sm{padding:4px 10px;font-size:11px}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:none;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--card2);border:1px solid var(--border2);border-radius:14px;padding:28px;width:460px;max-width:95vw}
+.modal h3{font-size:16px;font-weight:700;margin-bottom:20px}
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+.field label{font-size:11px;color:var(--dim)}
+.field input,.field select{background:rgba(0,0,0,.4);border:1px solid var(--border2);border-radius:7px;padding:9px 12px;color:var(--text);font-size:13px;outline:none;transition:border-color .2s}
+.field input:focus,.field select:focus{border-color:var(--accent)}
+.field select option{background:#1a1a24}
+.modal-btns{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--card2);border:1px solid var(--border2);border-radius:10px;padding:12px 18px;font-size:13px;z-index:999;transform:translateY(80px);opacity:0;transition:all .3s;pointer-events:none}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.ok{border-color:var(--green);color:var(--green)}
+.toast.err{border-color:var(--red);color:var(--red)}
+
+/* LOGIN */
+#loginScreen{position:fixed;inset:0;background:var(--bg);z-index:300;display:flex;align-items:center;justify-content:center}
+.login-card{background:var(--card);border:1px solid var(--border2);border-radius:14px;padding:36px;width:360px}
+.login-card h2{font-size:20px;font-weight:800;margin-bottom:6px}
+.login-card p{font-size:13px;color:var(--dim);margin-bottom:24px}
+
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading{display:flex;align-items:center;justify-content:center;padding:40px;gap:10px;color:var(--dim);font-size:13px}
+
+@media(max-width:768px){.stats-grid{grid-template-columns:1fr 1fr}.container{padding:16px 12px}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="loginScreen">
+  <div class="login-card">
+    <h2>Admin Panel</h2>
+    <p>Fame Client — управление подписками</p>
+    <div class="field">
+      <label>Email</label>
+      <input type="email" id="adminEmail" placeholder="admin@example.com">
+    </div>
+    <div class="field">
+      <label>Пароль</label>
+      <input type="password" id="adminPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')adminLogin()">
+    </div>
+    <div id="loginErr" style="color:var(--red);font-size:12px;margin-bottom:10px;min-height:16px"></div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="adminLogin()">Войти</button>
+  </div>
+</div>
+
+<nav>
+  <div class="nav-logo"><span>Fame</span> Client <span class="nav-badge">ADMIN</span></div>
+  <div class="nav-right">
+    <span id="adminNickNav">—</span>
+    <button class="logout-btn" onclick="adminLogout()">Выйти</button>
+  </div>
+</nav>
+
+<div class="container">
+  <!-- STATS -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">Всего пользователей</div>
+      <div class="stat-value" id="statUsers">—</div>
+      <div class="stat-sub">зарегистрировано</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Активных подписок</div>
+      <div class="stat-value" id="statActiveSubs" style="color:var(--green)">—</div>
+      <div class="stat-sub">сейчас активны</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">1.16.5 подписок</div>
+      <div class="stat-value" id="stat165" style="color:var(--accent)">—</div>
+      <div class="stat-sub">активных</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">1.21.4 подписок</div>
+      <div class="stat-value" id="stat214" style="color:#a78bfa">—</div>
+      <div class="stat-sub">активных</div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('subs',this)">Подписки</div>
+    <div class="tab" onclick="switchTab('users',this)">Пользователи</div>
+  </div>
+
+  <!-- SUBSCRIPTIONS TAB -->
+  <div class="tab-panel active" id="tab-subs">
+    <div class="table-wrap">
+      <div class="table-header">
+        <h3>Все подписки</h3>
+        <div style="display:flex;gap:10px;align-items:center">
+          <input class="search-box" id="subSearch" placeholder="Поиск по email..." oninput="filterSubs()">
+          <button class="btn btn-primary" onclick="openAddSub()">+ Добавить</button>
+        </div>
+      </div>
+      <div id="subsTableWrap">
+        <div class="loading"><div class="spinner"></div> Загрузка...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- USERS TAB -->
+  <div class="tab-panel" id="tab-users">
+    <div class="table-wrap">
+      <div class="table-header">
+        <h3>Пользователи</h3>
+        <input class="search-box" id="userSearch" placeholder="Поиск по email..." oninput="filterUsers()">
+      </div>
+      <div id="usersTableWrap">
+        <div class="loading"><div class="spinner"></div> Загрузка...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD/EDIT SUBSCRIPTION MODAL -->
+<div class="modal-overlay" id="subModal">
+  <div class="modal">
+    <h3 id="modalTitle">Добавить подписку</h3>
+    <input type="hidden" id="editSubId">
+    <div class="field">
+      <label>Email пользователя</label>
+      <input type="email" id="subEmail" placeholder="user@example.com">
+    </div>
+    <div class="field">
+      <label>Тариф</label>
+      <select id="subPlan">
+        <option value="1165_basic">Basic 1.16.5 (299₽/мес)</option>
+        <option value="1165_premium">Premium 1.16.5 (499₽/мес)</option>
+        <option value="1165_lifetime">Lifetime 1.16.5 (1499₽)</option>
+        <option value="1214_basic">Basic 1.21.4 (599₽/мес)</option>
+        <option value="1214_premium">Premium 1.21.4 (799₽/мес)</option>
+        <option value="1214_lifetime">Lifetime 1.21.4 (1799₽)</option>
+      </select>
+    </div>
+    <div class="field" id="expiresField">
+      <label>Дата окончания (пусто = навсегда)</label>
+      <input type="date" id="subExpires">
+    </div>
+    <div class="modal-btns">
+      <button class="btn" style="border:1px solid var(--border2);color:var(--dim)" onclick="closeModal()">Отмена</button>
+      <button class="btn btn-primary" onclick="saveSub()">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPABASE_URL  = 'https://bobxvjnlouzdhdsifkzr.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJvYnh2am5sb3V6ZGhkc2lma3pyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2NjMwODEsImV4cCI6MjA5MTIzOTA4MX0._2cIv6r4LhpQv4cnQqx4vTJ4cp9tUDINg-IqBLh1S5w';
+// ADMIN EMAILS — добавь свои
+const ADMIN_EMAILS = ['admin@fameclient.fun', 'your@email.com'];
+
+let adminSession = null;
+let allSubs = [];
+let allUsers = [];
+
+async function api(path, opts = {}) {
+  const headers = { 'apikey': SUPABASE_ANON, 'Content-Type': 'application/json', ...opts.headers };
+  if (adminSession?.access_token) headers['Authorization'] = 'Bearer ' + adminSession.access_token;
+  const r = await fetch(SUPABASE_URL + path, { ...opts, headers });
+  const text = await r.text();
+  try { return { ok: r.ok, status: r.status, data: JSON.parse(text) }; }
+  catch { return { ok: r.ok, status: r.status, data: text }; }
+}
+
+function toast(msg, ok = true) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + (ok ? 'ok' : 'err');
+  setTimeout(() => t.className = 'toast', 3000);
+}
+
+async function adminLogin() {
+  const email = document.getElementById('adminEmail').value.trim();
+  const pass  = document.getElementById('adminPass').value;
+  document.getElementById('loginErr').textContent = '';
+  if (!email || !pass) { document.getElementById('loginErr').textContent = 'Заполни все поля'; return; }
+
+  const r = await fetch(SUPABASE_URL + '/auth/v1/token?grant_type=password', {
+    method: 'POST',
+    headers: { 'apikey': SUPABASE_ANON, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password: pass })
+  });
+  const data = await r.json();
+  if (!data.access_token) {
+    document.getElementById('loginErr').textContent = 'Неверный email или пароль';
+    return;
+  }
+  // Check admin
+  const userEmail = data.user?.email || '';
+  if (!ADMIN_EMAILS.includes(userEmail)) {
+    document.getElementById('loginErr').textContent = 'Нет прав администратора';
+    return;
+  }
+  adminSession = data;
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('adminNickNav').textContent = userEmail.split('@')[0];
+  loadAll();
+}
+
+function adminLogout() {
+  adminSession = null;
+  document.getElementById('loginScreen').style.display = 'flex';
+}
+
+function switchTab(name, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+}
+
+// ── LOAD ALL DATA ─────────────────────────────────────────
+async function loadAll() {
+  await Promise.all([loadSubs(), loadUsers()]);
+  updateStats();
+}
+
+async function loadSubs() {
+  const r = await api('/rest/v1/subscriptions?select=*,profiles(nickname,hwid)&order=created_at.desc');
+  allSubs = Array.isArray(r.data) ? r.data : [];
+  renderSubsTable(allSubs);
+}
+
+async function loadUsers() {
+  const r = await api('/rest/v1/profiles?select=*&order=created_at.desc');
+  allUsers = Array.isArray(r.data) ? r.data : [];
+  renderUsersTable(allUsers);
+}
+
+function updateStats() {
+  const now = new Date();
+  const active = allSubs.filter(s => !s.expires_at || new Date(s.expires_at) > now);
+  document.getElementById('statUsers').textContent = allUsers.length;
+  document.getElementById('statActiveSubs').textContent = active.length;
+  document.getElementById('stat165').textContent = active.filter(s => s.plan?.startsWith('1165')).length;
+  document.getElementById('stat214').textContent = active.filter(s => s.plan?.startsWith('1214')).length;
+}
+
+// ── SUBSCRIPTIONS TABLE ───────────────────────────────────
+const PLAN_LABELS = {
+  '1165_basic':    ['Basic 1.16.5',    'badge-165'],
+  '1165_premium':  ['Premium 1.16.5',  'badge-165'],
+  '1165_lifetime': ['Lifetime 1.16.5', 'badge-lifetime'],
+  '1214_basic':    ['Basic 1.21.4',    'badge-214'],
+  '1214_premium':  ['Premium 1.21.4',  'badge-214'],
+  '1214_lifetime': ['Lifetime 1.21.4', 'badge-lifetime'],
+};
+
+function renderSubsTable(subs) {
+  const now = new Date();
+  const wrap = document.getElementById('subsTableWrap');
+  if (!subs.length) { wrap.innerHTML = '<div class="loading" style="color:var(--muted)">Нет подписок</div>'; return; }
+  wrap.innerHTML = `<table>
+    <thead><tr>
+      <th>Email</th><th>Никнейм</th><th>Тариф</th><th>Статус</th><th>Истекает</th><th>Действия</th>
+    </tr></thead>
+    <tbody>${subs.map(s => {
+      const [label, cls] = PLAN_LABELS[s.plan] || [s.plan, ''];
+      const expired = s.expires_at && new Date(s.expires_at) < now;
+      const statusBadge = expired
+        ? '<span class="badge badge-expired">Истекла</span>'
+        : '<span class="badge badge-active">Активна</span>';
+      const exp = s.expires_at ? new Date(s.expires_at).toLocaleDateString('ru-RU') : '♾ Навсегда';
+      return `<tr>
+        <td>${s.user_email || '—'}</td>
+        <td>${s.profiles?.nickname || '—'}</td>
+        <td><span class="badge ${cls}">${label}</span></td>
+        <td>${statusBadge}</td>
+        <td>${exp}</td>
+        <td style="display:flex;gap:6px">
+          <button class="btn btn-success btn-sm" onclick="editSub('${s.id}')">Изменить</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteSub('${s.id}')">Удалить</button>
+        </td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table>`;
+}
+
+function filterSubs() {
+  const q = document.getElementById('subSearch').value.toLowerCase();
+  renderSubsTable(allSubs.filter(s => (s.user_email||'').toLowerCase().includes(q)));
+}
+
+// ── USERS TABLE ───────────────────────────────────────────
+function renderUsersTable(users) {
+  const wrap = document.getElementById('usersTableWrap');
+  if (!users.length) { wrap.innerHTML = '<div class="loading" style="color:var(--muted)">Нет пользователей</div>'; return; }
+  wrap.innerHTML = `<table>
+    <thead><tr>
+      <th>Email</th><th>Никнейм</th><th>HWID</th><th>Зарегистрирован</th><th>Действия</th>
+    </tr></thead>
+    <tbody>${users.map(u => {
+      const date = u.created_at ? new Date(u.created_at).toLocaleDateString('ru-RU') : '—';
+      return `<tr>
+        <td>${u.email || '—'}</td>
+        <td>${u.nickname || '—'}</td>
+        <td style="font-family:monospace;font-size:11px;color:var(--dim)">${u.hwid ? u.hwid.substring(0,16)+'...' : '—'}</td>
+        <td>${date}</td>
+        <td style="display:flex;gap:6px">
+          <button class="btn btn-success btn-sm" onclick="openAddSubForUser('${u.email}')">+ Подписка</button>
+          <button class="btn btn-danger btn-sm" onclick="resetUserHwid('${u.user_id}')">Сброс HWID</button>
+        </td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table>`;
+}
+
+function filterUsers() {
+  const q = document.getElementById('userSearch').value.toLowerCase();
+  renderUsersTable(allUsers.filter(u => (u.email||'').toLowerCase().includes(q) || (u.nickname||'').toLowerCase().includes(q)));
+}
+
+// ── MODAL ─────────────────────────────────────────────────
+function openAddSub(email = '') {
+  document.getElementById('modalTitle').textContent = 'Добавить подписку';
+  document.getElementById('editSubId').value = '';
+  document.getElementById('subEmail').value = email;
+  document.getElementById('subPlan').value = '1165_basic';
+  document.getElementById('subExpires').value = '';
+  document.getElementById('subModal').classList.add('open');
+}
+
+function openAddSubForUser(email) {
+  switchTab('subs', document.querySelector('.tab'));
+  openAddSub(email);
+}
+
+function editSub(id) {
+  const s = allSubs.find(x => x.id === id);
+  if (!s) return;
+  document.getElementById('modalTitle').textContent = 'Изменить подписку';
+  document.getElementById('editSubId').value = id;
+  document.getElementById('subEmail').value = s.user_email || '';
+  document.getElementById('subPlan').value = s.plan || '1165_basic';
+  document.getElementById('subExpires').value = s.expires_at ? s.expires_at.split('T')[0] : '';
+  document.getElementById('subModal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('subModal').classList.remove('open');
+}
+
+async function saveSub() {
+  const email   = document.getElementById('subEmail').value.trim();
+  const plan    = document.getElementById('subPlan').value;
+  const expires = document.getElementById('subExpires').value;
+  const editId  = document.getElementById('editSubId').value;
+  if (!email) { toast('Введи email', false); return; }
+
+  // Find user_id by email from profiles
+  const pr = await api(`/rest/v1/profiles?email=eq.${encodeURIComponent(email)}&select=user_id`);
+  const profile = Array.isArray(pr.data) && pr.data[0];
+  if (!profile) { toast('Пользователь не найден: ' + email, false); return; }
+
+  const payload = {
+    user_id: profile.user_id,
+    user_email: email,
+    plan,
+    expires_at: expires ? new Date(expires + 'T23:59:59Z').toISOString() : null,
+  };
+
+  let r;
+  if (editId) {
+    r = await api(`/rest/v1/subscriptions?id=eq.${editId}`, {
+      method: 'PATCH',
+      body: JSON.stringify(payload),
+      headers: { 'Prefer': 'return=minimal' }
+    });
+  } else {
+    r = await api('/rest/v1/subscriptions', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: { 'Prefer': 'return=minimal' }
+    });
+  }
+
+  if (r.ok || r.status === 201 || r.status === 204) {
+    toast(editId ? 'Подписка обновлена' : 'Подписка добавлена');
+    closeModal();
+    await loadSubs();
+    updateStats();
+  } else {
+    toast('Ошибка: ' + JSON.stringify(r.data), false);
+  }
+}
+
+async function deleteSub(id) {
+  if (!confirm('Удалить подписку?')) return;
+  const r = await api(`/rest/v1/subscriptions?id=eq.${id}`, { method: 'DELETE' });
+  if (r.ok || r.status === 204) {
+    toast('Подписка удалена');
+    await loadSubs();
+    updateStats();
+  } else {
+    toast('Ошибка удаления', false);
+  }
+}
+
+async function resetUserHwid(userId) {
+  if (!confirm('Сбросить HWID пользователя?')) return;
+  const r = await api(`/rest/v1/profiles?user_id=eq.${userId}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ hwid: null }),
+    headers: { 'Prefer': 'return=minimal' }
+  });
+  if (r.ok || r.status === 204) { toast('HWID сброшен'); }
+  else toast('Ошибка', false);
+}
+
+// Close modal on overlay click
+document.getElementById('subModal').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeModal();
+});
+
+// Set default expires to +30 days when plan changes
+document.getElementById('subPlan').addEventListener('change', function() {
+  if (this.value.includes('lifetime')) {
+    document.getElementById('subExpires').value = '';
+  } else if (!document.getElementById('subExpires').value) {
+    const d = new Date(); d.setDate(d.getDate() + 30);
+    document.getElementById('subExpires').value = d.toISOString().split('T')[0];
+  }
+});
+</script>
+</body>
+</html>
