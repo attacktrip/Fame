@@ -149,9 +149,20 @@ async function doLogin(){
   <p>Fame Client — мощный чит-клиент с поддержкой версий 1.16.5 и 1.21.4. Обходит античиты, стабильная работа, красивый интерфейс.</p>
   <div class="hero-btns">
     <a class="btn-primary" href="#pricing">Купить подписку</a>
+    <a class="btn-secondary" id="heroDownload" href="https://github.com/attacktrip/Fame/releases/latest" target="_blank">↓ Скачать</a>
     <a class="btn-secondary" href="https://t.me/fameoftrip" target="_blank">Telegram</a>
   </div>
 </div>
+
+<script>
+// Update download link with latest release
+fetch('https://api.github.com/repos/attacktrip/Fame/releases/latest',{headers:{'Accept':'application/vnd.github+json'}})
+  .then(r=>r.json()).then(d=>{
+    const a=d.assets?.find(x=>x.name.toLowerCase().endsWith('.exe'));
+    if(a){document.getElementById('heroDownload').href=a.browser_download_url;}
+    else{document.getElementById('heroDownload').href=d.html_url||'https://github.com/attacktrip/Fame/releases/latest';}
+  }).catch(()=>{});
+</script>
 
 <section id="pricing">
   <div class="section-title">
