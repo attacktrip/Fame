@@ -22,19 +22,13 @@ nav{position:sticky;top:0;z-index:100;backdrop-filter:blur(20px);background:rgba
 .nav-links a:hover{color:var(--text)}
 .nav-btn{background:var(--accent);color:#fff;border:none;padding:8px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;transition:opacity .2s}
 .nav-btn:hover{opacity:.85}
-.hero{position:relative;z-index:1;text-align:center;padding:100px 20px 60px}
-/* Hero background image with fade */
-.hero-bg{position:absolute;inset:0;background:url('back.png') center/cover no-repeat;z-index:0;-webkit-mask-image:linear-gradient(to bottom,rgba(0,0,0,.7) 0%,rgba(0,0,0,.5) 60%,transparent 100%);mask-image:linear-gradient(to bottom,rgba(0,0,0,.7) 0%,rgba(0,0,0,.5) 60%,transparent 100%)}
-.hero>*{position:relative;z-index:1}
-.hero-gif{width:320px;max-width:90%;border-radius:12px;margin:28px auto 0;display:block;box-shadow:0 8px 40px rgba(0,0,0,.5)}
-.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(124,106,247,.12);border:1px solid rgba(124,106,247,.3);border-radius:20px;padding:5px 14px;font-size:12px;color:var(--accent2);margin-bottom:24px}
-.hero-badge::before{content:'';width:6px;height:6px;background:var(--accent);border-radius:50%;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-/* HERO */
 .hero{position:relative;z-index:1;text-align:center;padding:100px 20px 60px;overflow:hidden}
 .hero-bg{position:absolute;top:0;left:0;right:0;bottom:0;background:url('back.png') center top/cover no-repeat;z-index:0;opacity:.5}
 .hero-fade{position:absolute;bottom:0;left:0;right:0;height:50%;background:linear-gradient(to bottom,transparent,var(--bg));z-index:0}
 .hero>*:not(.hero-bg):not(.hero-fade){position:relative;z-index:1}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(124,106,247,.12);border:1px solid rgba(124,106,247,.3);border-radius:20px;padding:5px 14px;font-size:12px;color:var(--accent2);margin-bottom:24px}
+.hero-badge::before{content:'';width:6px;height:6px;background:var(--accent);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 .hero-gif{width:340px;max-width:90%;border-radius:14px;margin:32px auto 0;display:block;box-shadow:0 12px 48px rgba(0,0,0,.6)}
 .hero h1{font-size:clamp(36px,6vw,72px);font-weight:800;line-height:1.1;margin-bottom:20px;letter-spacing:-1px}
 .hero h1 span{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
@@ -96,32 +90,22 @@ footer a:hover{color:var(--accent)}
   </div>
 </nav>
 
-<!-- AUTH MODAL (Войти / Регистрация) -->
+<!-- AUTH MODAL -->
 <div id="loginModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:center;justify-content:center">
   <div style="background:#13131a;border:1px solid rgba(255,255,255,.15);border-radius:14px;padding:28px;width:380px;max-width:95vw;position:relative">
-
-    <!-- Close button -->
-    <button onclick="document.getElementById('loginModal').style.display='none'" style="position:absolute;top:12px;right:14px;background:transparent;border:none;color:#8888a0;font-size:18px;cursor:pointer;line-height:1;padding:2px 6px" title="Закрыть">×</button>
-
-    <!-- Tabs -->
+    <button onclick="document.getElementById('loginModal').style.display='none'" style="position:absolute;top:12px;right:14px;background:transparent;border:none;color:#8888a0;font-size:18px;cursor:pointer;line-height:1;padding:2px 6px">×</button>
     <div style="display:flex;gap:3px;margin-bottom:22px;background:rgba(0,0,0,.35);border-radius:9px;padding:3px">
       <button id="tabLogin" onclick="switchTab('login')" style="flex:1;padding:8px;border:none;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;background:#7c6af7;color:#fff;transition:all .2s">Войти</button>
       <button id="tabReg"   onclick="switchTab('reg')"   style="flex:1;padding:8px;border:none;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;background:transparent;color:#8888a0;transition:all .2s">Регистрация</button>
     </div>
-
-    <!-- LOGIN -->
     <div id="formLogin">
       <div style="display:flex;flex-direction:column;gap:10px">
         <input id="lEmail" type="email" placeholder="Email" style="background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.14);border-radius:7px;padding:10px 14px;color:#e8e8f0;font-size:13px;outline:none">
         <input id="lPass"  type="password" placeholder="Пароль" style="background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.14);border-radius:7px;padding:10px 14px;color:#e8e8f0;font-size:13px;outline:none" onkeydown="if(event.key==='Enter')doLogin()">
       </div>
       <div id="lErr" style="color:#f87171;font-size:12px;margin-top:8px;min-height:16px"></div>
-      <div style="display:flex;gap:10px;margin-top:14px">
-        <button id="lBtn" onclick="doLogin()" style="width:100%;padding:10px;background:#7c6af7;border:none;border-radius:8px;color:#fff;font-weight:700;cursor:pointer;font-size:13px">Войти</button>
-      </div>
+      <button id="lBtn" onclick="doLogin()" style="width:100%;margin-top:14px;padding:10px;background:#7c6af7;border:none;border-radius:8px;color:#fff;font-weight:700;cursor:pointer;font-size:13px">Войти</button>
     </div>
-
-    <!-- REGISTER -->
     <div id="formReg" style="display:none">
       <div style="display:flex;flex-direction:column;gap:10px">
         <input id="rEmail" type="email"    placeholder="Email" style="background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.14);border-radius:7px;padding:10px 14px;color:#e8e8f0;font-size:13px;outline:none">
@@ -129,79 +113,105 @@ footer a:hover{color:var(--accent)}
         <input id="rNick"  type="text"     placeholder="Никнейм в Minecraft" style="background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.14);border-radius:7px;padding:10px 14px;color:#e8e8f0;font-size:13px;outline:none" onkeydown="if(event.key==='Enter')doRegister()">
       </div>
       <div id="rErr" style="color:#f87171;font-size:12px;margin-top:8px;min-height:16px"></div>
-      <div style="display:flex;gap:10px;margin-top:14px">
-        <button id="rBtn" onclick="doRegister()" style="width:100%;padding:10px;background:#7c6af7;border:none;border-radius:8px;color:#fff;font-weight:700;cursor:pointer;font-size:13px">Создать аккаунт</button>
-      </div>
+      <button id="rBtn" onclick="doRegister()" style="width:100%;margin-top:14px;padding:10px;background:#7c6af7;border:none;border-radius:8px;color:#fff;font-weight:700;cursor:pointer;font-size:13px">Создать аккаунт</button>
     </div>
-
   </div>
 </div>
 
-<script>
-const _SB='https://bobxvjnlouzdhdsifkzr.supabase.co';
-const _KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJvYnh2am5sb3V6ZGhkc2lma3pyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2NjMwODEsImV4cCI6MjA5MTIzOTA4MX0._2cIv6r4LhpQv4cnQqx4vTJ4cp9tUDINg-IqBLh1S5w';
+<!-- ═══ FIREBASE SDK ═══ -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import { getFirestore, doc, setDoc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-function switchTab(t) {
-  const isL = t==='login';
-  document.getElementById('formLogin').style.display = isL?'':'none';
-  document.getElementById('formReg').style.display   = isL?'none':'';
+// ══════════════════════════════════════════════
+// ЗАМЕНИ ЭТИ ЗНАЧЕНИЯ НА СВОИ ИЗ FIREBASE CONSOLE
+const firebaseConfig = {
+  apiKey: "AIzaSyAiZv5BNz7Kj0-b41LHLB7P3Y_w9BupqqQ",
+  authDomain: "fameclient-a8735.firebaseapp.com",
+  projectId: "fameclient-a8735",
+  storageBucket: "fameclient-a8735.firebasestorage.app",
+  messagingSenderId: "1071684024649",
+  appId: "1:1071684024649:web:e2ccb6a284ba2e4d52c298",
+  measurementId: "G-01XPQE2BPX"
+};
+// ══════════════════════════════════════════════
+
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+// Если уже залогинен — кнопка "Кабинет" ведёт на dashboard
+onAuthStateChanged(auth, user => {
+  if (user) {
+    document.querySelectorAll('[data-cabinet]').forEach(el => {
+      el.onclick = () => { window.location.href = 'dashboard.html'; return false; };
+    });
+  }
+});
+
+window.switchTab = (t) => {
+  const isL = t === 'login';
+  document.getElementById('formLogin').style.display = isL ? '' : 'none';
+  document.getElementById('formReg').style.display   = isL ? 'none' : '';
   document.getElementById('tabLogin').style.cssText  = `flex:1;padding:8px;border:none;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;background:${isL?'#7c6af7':'transparent'};color:${isL?'#fff':'#8888a0'}`;
   document.getElementById('tabReg').style.cssText    = `flex:1;padding:8px;border:none;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;background:${isL?'transparent':'#7c6af7'};color:${isL?'#8888a0':'#fff'}`;
-  document.getElementById('lErr').textContent='';
-  document.getElementById('rErr').textContent='';
-}
+  document.getElementById('lErr').textContent = '';
+  document.getElementById('rErr').textContent = '';
+};
 
-function openLogin(tab) {
-  const s=localStorage.getItem('fame_session');
-  if(s){try{const p=JSON.parse(s);if(p?.access_token){window.location.href='dashboard.html';return;}}catch(e){}}
-  document.getElementById('loginModal').style.display='flex';
-  switchTab(tab||'login');
-  setTimeout(()=>document.getElementById(tab==='reg'?'rEmail':'lEmail').focus(),100);
-}
+window.openLogin = (tab) => {
+  const user = auth.currentUser;
+  if (user) { window.location.href = 'dashboard.html'; return; }
+  document.getElementById('loginModal').style.display = 'flex';
+  window.switchTab(tab || 'login');
+  setTimeout(() => document.getElementById(tab === 'reg' ? 'rEmail' : 'lEmail').focus(), 100);
+};
 
-async function doLogin() {
-  const email=document.getElementById('lEmail').value.trim();
-  const pass=document.getElementById('lPass').value;
-  const err=document.getElementById('lErr');
-  const btn=document.getElementById('lBtn');
-  err.textContent='';
-  if(!email||!pass){err.textContent='Заполни все поля';return;}
-  btn.textContent='Входим...';btn.disabled=true;
-  try{
-    const r=await fetch(_SB+'/auth/v1/token?grant_type=password',{method:'POST',headers:{'apikey':_KEY,'Content-Type':'application/json'},body:JSON.stringify({email,password:pass})});
-    const d=await r.json();
-    if(!d.access_token){err.textContent=d.error_description||d.msg||'Неверный email или пароль';btn.textContent='Войти';btn.disabled=false;return;}
-    localStorage.setItem('fame_session',JSON.stringify(d));
-    window.location.href='dashboard.html';
-  }catch(e){err.textContent='Ошибка соединения';btn.textContent='Войти';btn.disabled=false;}
-}
+window.doLogin = async () => {
+  const email = document.getElementById('lEmail').value.trim();
+  const pass  = document.getElementById('lPass').value;
+  const err   = document.getElementById('lErr');
+  const btn   = document.getElementById('lBtn');
+  err.textContent = '';
+  if (!email || !pass) { err.textContent = 'Заполни все поля'; return; }
+  btn.textContent = 'Входим...'; btn.disabled = true;
+  try {
+    await signInWithEmailAndPassword(auth, email, pass);
+    window.location.href = 'dashboard.html';
+  } catch(e) {
+    const msgs = { 'auth/user-not-found':'Пользователь не найден', 'auth/wrong-password':'Неверный пароль', 'auth/invalid-credential':'Неверный email или пароль', 'auth/too-many-requests':'Слишком много попыток, подожди' };
+    err.textContent = msgs[e.code] || 'Ошибка входа';
+    btn.textContent = 'Войти'; btn.disabled = false;
+  }
+};
 
-async function doRegister() {
-  const email=document.getElementById('rEmail').value.trim();
-  const pass=document.getElementById('rPass').value;
-  const nick=document.getElementById('rNick').value.trim();
-  const err=document.getElementById('rErr');
-  const btn=document.getElementById('rBtn');
-  err.textContent='';
-  if(!email||!pass||!nick){err.textContent='Заполни все поля';return;}
-  if(pass.length<6){err.textContent='Пароль минимум 6 символов';return;}
-  btn.textContent='Создаём...';btn.disabled=true;
-  try{
-    const r=await fetch(_SB+'/auth/v1/signup',{method:'POST',headers:{'apikey':_KEY,'Content-Type':'application/json'},body:JSON.stringify({email,password:pass,data:{nickname:nick}})});
-    const d=await r.json();
-    if(d.user||d.id){
-      // Auto-login
-      const r2=await fetch(_SB+'/auth/v1/token?grant_type=password',{method:'POST',headers:{'apikey':_KEY,'Content-Type':'application/json'},body:JSON.stringify({email,password:pass})});
-      const d2=await r2.json();
-      if(d2.access_token){localStorage.setItem('fame_session',JSON.stringify(d2));window.location.href='dashboard.html';return;}
-      document.getElementById('loginModal').style.display='none';
-      alert('Аккаунт создан! Войди через кнопку "Кабинет".');
-    }else{
-      err.textContent=d.msg||d.error_description||'Ошибка регистрации';
-      btn.textContent='Создать аккаунт';btn.disabled=false;
-    }
-  }catch(e){err.textContent='Ошибка соединения';btn.textContent='Создать аккаунт';btn.disabled=false;}
-}
+window.doRegister = async () => {
+  const email = document.getElementById('rEmail').value.trim();
+  const pass  = document.getElementById('rPass').value;
+  const nick  = document.getElementById('rNick').value.trim();
+  const err   = document.getElementById('rErr');
+  const btn   = document.getElementById('rBtn');
+  err.textContent = '';
+  if (!email || !pass || !nick) { err.textContent = 'Заполни все поля'; return; }
+  if (pass.length < 6) { err.textContent = 'Пароль минимум 6 символов'; return; }
+  btn.textContent = 'Создаём...'; btn.disabled = true;
+  try {
+    const cred = await createUserWithEmailAndPassword(auth, email, pass);
+    // Создаём профиль в Firestore
+    await setDoc(doc(db, 'profiles', cred.user.uid), {
+      nickname: nick,
+      email:    email,
+      hwid:     null,
+      created_at: new Date().toISOString()
+    });
+    window.location.href = 'dashboard.html';
+  } catch(e) {
+    const msgs = { 'auth/email-already-in-use':'Email уже используется', 'auth/invalid-email':'Некорректный email', 'auth/weak-password':'Пароль слишком простой' };
+    err.textContent = msgs[e.code] || 'Ошибка регистрации';
+    btn.textContent = 'Создать аккаунт'; btn.disabled = false;
+  }
+};
 </script>
 
 <div class="hero">
@@ -218,76 +228,49 @@ async function doRegister() {
   <img src="dasd.gif" alt="Fame Client" class="hero-gif">
 </div>
 
-<script>
-// Update download link with latest release
-fetch('https://api.github.com/repos/attacktrip/Fame/releases/latest',{headers:{'Accept':'application/vnd.github+json'}})
-  .then(r=>r.json()).then(d=>{
-    const a=d.assets?.find(x=>x.name.toLowerCase().endsWith('.exe'));
-    if(a){document.getElementById('heroDownload').href=a.browser_download_url;}
-    else{document.getElementById('heroDownload').href=d.html_url||'https://github.com/attacktrip/Fame/releases/latest';}
-  }).catch(()=>{});
-</script>
-
 <section id="pricing">
   <div class="section-title">
     <h2>Выбери свой план</h2>
     <p>Доступные подписки для каждой версии Minecraft</p>
   </div>
-
   <div class="version-tabs">
     <button class="vtab active" onclick="showVersion('v1165',this)">Minecraft 1.16.5</button>
     <button class="vtab" onclick="showVersion('v1214',this)">Minecraft 1.21.4</button>
   </div>
-
-  <!-- 1.16.5 -->
   <div class="version-panel active" id="v1165">
     <div class="pricing-grid">
       <div class="price-card">
-        <div class="card-version">1.16.5</div>
-        <div class="card-name">Basic</div>
-        <div class="card-price">299<span>₽</span></div>
-        <div class="card-sub">в месяц</div>
+        <div class="card-version">1.16.5</div><div class="card-name">Basic</div>
+        <div class="card-price">299<span>₽</span></div><div class="card-sub">в месяц</div>
         <a class="card-btn" href="https://funpay.com/lots/offer?id=67250015" target="_blank">Купить на FunPay</a>
       </div>
       <div class="price-card featured">
-        <div class="card-version">1.16.5</div>
-        <div class="card-name">Premium</div>
-        <div class="card-price">499<span>₽</span></div>
-        <div class="card-sub">в месяц</div>
+        <div class="card-version">1.16.5</div><div class="card-name">Premium</div>
+        <div class="card-price">499<span>₽</span></div><div class="card-sub">в месяц</div>
         <a class="card-btn" href="https://funpay.com/lots/offer?id=67279271" target="_blank">Купить на FunPay</a>
       </div>
       <div class="price-card lifetime">
-        <div class="card-version">1.16.5</div>
-        <div class="card-name">Lifetime</div>
-        <div class="card-price">699<span>₽</span></div>
-        <div class="card-sub">единоразово</div>
+        <div class="card-version">1.16.5</div><div class="card-name">Lifetime</div>
+        <div class="card-price">699<span>₽</span></div><div class="card-sub">единоразово</div>
         <a class="card-btn" href="https://funpay.com/lots/offer?id=67249907" target="_blank">Купить на FunPay</a>
       </div>
     </div>
   </div>
-
-  <!-- 1.21.4 -->
   <div class="version-panel" id="v1214">
     <div class="pricing-grid">
       <div class="price-card">
-        <div class="card-version">1.21.4</div>
-        <div class="card-name">Basic</div>
-        <div class="card-price">599<span>₽</span></div>
-        <div class="card-sub">в месяц</div>
+        <div class="card-version">1.21.4</div><div class="card-name">Basic</div>
+        <div class="card-price">599<span>₽</span></div><div class="card-sub">в месяц</div>
         <a class="card-btn" href="https://funpay.com/lots/offer?id=67288093" target="_blank">Купить на FunPay</a>
       </div>
       <div class="price-card featured">
-        <div class="card-version">1.21.4</div>
-        <div class="card-name">Premium</div>
-        <div class="card-price">799<span>₽</span></div>
-        <div class="card-sub">в месяц</div>
+        <div class="card-version">1.21.4</div><div class="card-name">Premium</div>
+        <div class="card-price">799<span>₽</span></div><div class="card-sub">в месяц</div>
         <a class="card-btn" href="https://funpay.com/lots/offer?id=67288226" target="_blank">Купить на FunPay</a>
       </div>
       <div class="price-card lifetime">
-        <div class="card-version">1.21.4</div>
-        <div class="card-name">Lifetime</div>
-        <div class="card-price">999<span>₽</span></div>
-        <div class="card-sub">единоразово</div>
+        <div class="card-version">1.21.4</div><div class="card-name">Lifetime</div>
+        <div class="card-price">999<span>₽</span></div><div class="card-sub">единоразово</div>
         <a class="card-btn" href="https://funpay.com/lots/offer?id=67287953" target="_blank">Купить на FunPay</a>
       </div>
     </div>
@@ -295,10 +278,7 @@ fetch('https://api.github.com/repos/attacktrip/Fame/releases/latest',{headers:{'
 </section>
 
 <section id="features">
-  <div class="section-title">
-    <h2>Возможности</h2>
-    <p>Fame Client — полный набор инструментов для игры</p>
-  </div>
+  <div class="section-title"><h2>Возможности</h2><p>Fame Client — полный набор инструментов для игры</p></div>
   <div class="features-grid">
     <div class="feat-card"><div class="feat-icon">⚔️</div><h3>Combat</h3><p>KillAura, CriticalHit, AutoClicker, Reach, Velocity и другие боевые модули.</p></div>
     <div class="feat-card"><div class="feat-icon">🏃</div><h3>Movement</h3><p>Speed, Flight, NoFall, Sprint, Scaffold, Parkour — полный контроль движения.</p></div>
@@ -324,13 +304,12 @@ function showVersion(id,btn){
   document.getElementById(id).classList.add('active');
   btn.classList.add('active');
 }
-// Latest release download link
 fetch('https://api.github.com/repos/attacktrip/Fame/releases/latest',{headers:{'Accept':'application/vnd.github+json'}})
   .then(r=>r.json()).then(d=>{
     const a=d.assets?.find(x=>x.name.toLowerCase().endsWith('.exe'));
     document.getElementById('heroDownload').href=a?a.browser_download_url:(d.html_url||'https://github.com/attacktrip/Fame/releases/latest');
   }).catch(()=>{});
-// Auto-open register modal if #register in URL
 if(window.location.hash==='#register'){openLogin('reg');}
-</script></body>
+</script>
+</body>
 </html>
