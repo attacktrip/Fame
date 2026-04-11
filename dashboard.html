@@ -82,7 +82,7 @@ nav{position:sticky;top:0;z-index:100;backdrop-filter:blur(20px);background:rgba
 <!-- ═══ FIREBASE SDK ═══ -->
 <script type="module">
 import { initializeApp }                                          from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import { getAuth, onAuthStateChanged, signOut, updatePassword, updateEmail } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import { getAuth, onAuthStateChanged, signOut, updatePassword, updateEmail, browserLocalPersistence, setPersistence } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 // ══════════════════════════════════════════════
@@ -104,6 +104,8 @@ const ADMIN_EMAILS = ['whydoulive@yandex.ru', 'semyon.klementev@yandex.ru'];
 const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db   = getFirestore(app);
+
+setPersistence(auth, browserLocalPersistence).catch(() => {});
 
 const VERSION_LABELS = {
   '1165_basic':    { label:'Basic 1.16.5',    color:'var(--accent)' },
