@@ -396,20 +396,18 @@ async function renderAdmin() {
 }
 
 // ── AUTH CHECK ───────────────────────────────────────────────────────────────
-// Явно устанавливаем persistence чтобы сессия сохранялась в localStorage
-setPersistence(auth, browserLocalPersistence).then(() => {
-  // Только после установки persistence подписываемся на изменения
-  let resolved = false;
-
-  onAuthStateChanged(auth, async user => {
-    resolved = true;
+// authStateReady() ждёт пока Firebase ТОЧНО определит состояние — без гонки
+setPersistence(auth, browserLocalPersistence)
+  .then(() => auth.authStateReady())
+  .then(async () => {
+    const user = auth.currentUser;
 
     if (!user) {
       window.location.href = 'index.html';
       return;
     }
 
-    console.log('Admin check for:', user.email);
+    console.log('Admin panel: logged in as', user.email);
 
     if (!ADMIN_EMAILS.includes(user.email)) {
       document.getElementById('mainContainer').innerHTML = `
@@ -427,13 +425,11 @@ setPersistence(auth, browserLocalPersistence).then(() => {
       signOut(auth).then(() => window.location.href = 'index.html');
 
     await renderAdmin();
+  })
+  .catch(err => {
+    console.error('Auth error:', err);
+    window.location.href = 'index.html';
   });
-
-  // Если через 5 секунд onAuthStateChanged так и не вызвался — что-то сломано
-  setTimeout(() => {
-    if (!resolved) window.location.href = 'index.html';
-  }, 5000);
-});
 </script>
 </body>
 </html>
