@@ -96,13 +96,12 @@ import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, updateDoc, q
 // ══════════════════════════════════════════════
 // ЗАМЕНИ НА СВОИ ЗНАЧЕНИЯ ИЗ FIREBASE CONSOLE
 const firebaseConfig = {
-  apiKey: "AIzaSyAiZv5BNz7Kj0-b41LHLB7P3Y_w9BupqqQ",
-  authDomain: "fameclient-a8735.firebaseapp.com",
-  projectId: "fameclient-a8735",
-  storageBucket: "fameclient-a8735.firebasestorage.app",
+  apiKey:            "AIzaSyAiZv5BNz7Kj0-b41LHLB7P3Y_w9BupqqQ",
+  authDomain:        "fameclient-a8735.firebaseapp.com",
+  projectId:         "fameclient-a8735",
+  storageBucket:     "fameclient-a8735.firebasestorage.app",
   messagingSenderId: "1071684024649",
-  appId: "1:1071684024649:web:e2ccb6a284ba2e4d52c298",
-  measurementId: "G-01XPQE2BPX"
+  appId:             "1:1071684024649:web:e2ccb6a284ba2e4d52c298"
 };
 // ADMIN emails — только эти люди видят эту страницу
 const ADMIN_EMAILS = ['whydoulive@yandex.ru', 'semyon.klementev@yandex.ru'];
@@ -397,18 +396,19 @@ async function renderAdmin() {
 }
 
 // ── AUTH CHECK ───────────────────────────────────────────────────────────────
-// authStateReady() ждёт пока Firebase ТОЧНО определит состояние — без гонки
 setPersistence(auth, browserLocalPersistence)
   .then(() => auth.authStateReady())
   .then(async () => {
     const user = auth.currentUser;
 
-    if (!user) {
-      window.location.href = 'index.html';
-      return;
-    }
+    // Показываем состояние прямо на странице для отладки
+    document.getElementById('mainContainer').innerHTML =
+      `<div style="padding:32px;color:var(--dim);font-size:13px">
+        Auth state: <b style="color:var(--text)">${user ? 'залогинен как ' + user.email : 'не залогинен'}</b>
+        ${user ? '' : '<br><br><a href="index.html" style="color:var(--accent)">← Войти</a>'}
+      </div>`;
 
-    console.log('Admin panel: logged in as', user.email);
+    if (!user) return; // не редиректим — показываем сообщение
 
     if (!ADMIN_EMAILS.includes(user.email)) {
       document.getElementById('mainContainer').innerHTML = `
@@ -428,8 +428,13 @@ setPersistence(auth, browserLocalPersistence)
     await renderAdmin();
   })
   .catch(err => {
-    console.error('Auth error:', err);
-    window.location.href = 'index.html';
+    // Показываем ошибку на странице вместо редиректа
+    document.getElementById('mainContainer').innerHTML =
+      `<div style="padding:32px;color:var(--red);font-size:13px">
+        <b>Ошибка Firebase:</b><br><br>
+        <code style="background:rgba(0,0,0,.4);padding:8px 12px;border-radius:6px;display:block;word-break:break-all">${err.code || ''}: ${err.message}</code>
+        <br><a href="index.html" style="color:var(--accent)">← На главную</a>
+      </div>`;
   });
 </script>
 </body>
