@@ -290,8 +290,11 @@ function showLoginForm() {
 // ── MAIN ──
 document.getElementById('logoutBtn').onclick = () => signOut(auth).then(() => window.location.href = 'index.html');
 
-onAuthStateChanged(auth, async user => {
-  if (!user) { showLoginForm(); return; }
+setPersistence(auth, browserLocalPersistence)
+  .then(() => auth.authStateReady())
+  .then(async () => {
+    const user = auth.currentUser;
+    if (!user) { showLoginForm(); return; }
 
   // Загружаем профиль и подписки параллельно
   const [profileSnap, subsSnap] = await Promise.all([
@@ -315,7 +318,7 @@ onAuthStateChanged(auth, async user => {
   subsSnap.forEach(d => subs.push(d.data()));
 
   renderDashboard(user, profile, subs);
-});
+  }).catch(err => { console.error('Auth error:', err); showLoginForm(); });
 </script>
 </body>
 </html>
