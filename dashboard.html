@@ -14,8 +14,6 @@
 }
 body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
 body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(124,106,247,.15),transparent);pointer-events:none;z-index:0}
-
-/* NAV */
 nav{position:sticky;top:0;z-index:100;backdrop-filter:blur(20px);background:rgba(10,10,12,.85);border-bottom:1px solid var(--border);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:56px}
 .nav-logo{font-weight:700;font-size:17px;color:var(--text)}
 .nav-logo span{color:var(--accent)}
@@ -23,18 +21,12 @@ nav{position:sticky;top:0;z-index:100;backdrop-filter:blur(20px);background:rgba
 .nav-user strong{color:var(--text)}
 .logout-btn{background:transparent;border:1px solid var(--border2);color:var(--dim);padding:5px 14px;border-radius:7px;font-size:12px;cursor:pointer;transition:all .2s}
 .logout-btn:hover{border-color:var(--red);color:var(--red)}
-
-/* LAYOUT */
 .container{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:32px 20px}
 .page-title{font-size:22px;font-weight:800;margin-bottom:24px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-
-/* CARDS */
 .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px}
 .card-title{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:14px}
-
-/* SUBSCRIPTION CARDS */
 .sub-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;position:relative;transition:border-color .2s}
 .sub-card.active{border-color:var(--accent)}
 .sub-card.active::after{content:'Активна';position:absolute;top:12px;right:12px;background:rgba(124,106,247,.2);color:var(--accent);font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px}
@@ -44,8 +36,6 @@ nav{position:sticky;top:0;z-index:100;backdrop-filter:blur(20px);background:rgba
 .sub-name{font-size:16px;font-weight:700;margin-bottom:4px}
 .sub-expires{font-size:12px;color:var(--dim)}
 .sub-expires span{color:var(--text)}
-
-/* HWID */
 .hwid-box{background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:monospace;font-size:12px;color:var(--dim);word-break:break-all;margin-bottom:12px}
 .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .2s;text-decoration:none}
 .btn-primary{background:var(--accent);color:#fff}
@@ -53,8 +43,6 @@ nav{position:sticky;top:0;z-index:100;backdrop-filter:blur(20px);background:rgba
 .btn-danger{background:transparent;border:1px solid var(--red);color:var(--red)}
 .btn-danger:hover{background:rgba(248,113,113,.1)}
 .btn-sm{padding:6px 14px;font-size:12px}
-
-/* PROFILE */
 .avatar{width:52px;height:52px;border-radius:50%;background:var(--card2);border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:var(--accent);flex-shrink:0}
 .profile-row{display:flex;align-items:center;gap:16px;margin-bottom:16px}
 .profile-info h3{font-size:16px;font-weight:700;margin-bottom:2px}
@@ -63,23 +51,14 @@ nav{position:sticky;top:0;z-index:100;backdrop-filter:blur(20px);background:rgba
 .field-row label{font-size:11px;color:var(--dim)}
 .field-row input{background:rgba(0,0,0,.3);border:1px solid var(--border2);border-radius:7px;padding:8px 12px;color:var(--text);font-size:13px;outline:none;transition:border-color .2s}
 .field-row input:focus{border-color:var(--accent)}
-.field-row input:disabled{opacity:.5;cursor:not-allowed}
-
-/* EMPTY STATE */
 .empty{text-align:center;padding:32px;color:var(--dim);font-size:13px}
-.empty a{color:var(--accent);text-decoration:none}
-
-/* TOAST */
 .toast{position:fixed;bottom:24px;right:24px;background:var(--card2);border:1px solid var(--border2);border-radius:10px;padding:12px 18px;font-size:13px;z-index:999;transform:translateY(80px);opacity:0;transition:all .3s;pointer-events:none}
 .toast.show{transform:translateY(0);opacity:1}
 .toast.ok{border-color:var(--green);color:var(--green)}
 .toast.err{border-color:var(--red);color:var(--red)}
-
-/* LOADING */
 .spinner{display:inline-block;width:16px;height:16px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading-overlay{display:flex;align-items:center;justify-content:center;min-height:200px;gap:10px;color:var(--dim);font-size:14px}
-
 @media(max-width:640px){.grid2,.grid3{grid-template-columns:1fr}nav{padding:0 16px}.container{padding:20px 14px}}
 </style>
 </head>
@@ -90,123 +69,41 @@ nav{position:sticky;top:0;z-index:100;backdrop-filter:blur(20px);background:rgba
   <div class="nav-user">
     <span>Привет, <strong id="navNick">...</strong></span>
     <a id="adminBtn" href="admin.html" style="display:none;background:rgba(251,146,60,.15);color:#fb923c;border:1px solid rgba(251,146,60,.3);padding:5px 14px;border-radius:7px;font-size:12px;font-weight:700;text-decoration:none">Админ</a>
-    <button class="logout-btn" onclick="logout()">Выйти</button>
+    <button class="logout-btn" id="logoutBtn">Выйти</button>
   </div>
 </nav>
 
-<div class="container">
-  <div class="page-title">Личный кабинет</div>
-
-  <!-- PROFILE + HWID -->
-  <div class="grid2" style="margin-bottom:20px">
-    <div class="card">
-      <div class="card-title">Профиль</div>
-      <div class="profile-row">
-        <div class="avatar" id="avatarLetter">?</div>
-        <div class="profile-info">
-          <h3 id="profileNick">Загрузка...</h3>
-          <p id="profileEmail">—</p>
-        </div>
-      </div>
-      <div class="field-row">
-        <label>Никнейм в игре</label>
-        <input type="text" id="nicknameInput" placeholder="Введи никнейм" maxlength="32">
-      </div>
-      <button class="btn btn-primary btn-sm" onclick="saveNickname()" style="margin-bottom:10px">Сохранить никнейм</button>
-
-      <!-- Change email -->
-      <div style="border-top:1px solid var(--border);padding-top:12px;margin-top:4px">
-        <div class="field-row">
-          <label>Новый Email</label>
-          <input type="email" id="newEmailInput" placeholder="new@example.com">
-        </div>
-        <button class="btn btn-sm" style="border:1px solid var(--border2);color:var(--dim);margin-bottom:10px" onclick="changeEmail()">Сменить Email</button>
-      </div>
-
-      <!-- Change password -->
-      <div style="border-top:1px solid var(--border);padding-top:12px;margin-top:4px">
-        <div class="field-row">
-          <label>Новый пароль</label>
-          <input type="password" id="newPassInput" placeholder="Минимум 6 символов">
-        </div>
-        <div class="field-row">
-          <label>Повтори пароль</label>
-          <input type="password" id="newPassConfirm" placeholder="Повтори пароль">
-        </div>
-        <button class="btn btn-sm" style="border:1px solid var(--border2);color:var(--dim)" onclick="changePassword()">Сменить пароль</button>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">HWID</div>
-      <p style="font-size:12px;color:var(--dim);margin-bottom:10px">Привязан к твоему компьютеру. Сбрось если сменил ПК.</p>
-      <div class="hwid-box" id="hwidBox">Загрузка...</div>
-      <button class="btn btn-danger btn-sm" onclick="resetHwid()">Сбросить HWID</button>
-    </div>
-  </div>
-
-  <!-- SUBSCRIPTIONS -->
-  <div class="card" style="margin-bottom:20px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-      <div class="card-title" style="margin-bottom:0">Мои подписки</div>
-      <a href="index.html#pricing" class="btn btn-primary btn-sm">Купить подписку</a>
-    </div>
-    <div id="subsContainer">
-      <div class="loading-overlay"><div class="spinner"></div> Загрузка...</div>
-    </div>
-  </div>
-
-  <!-- DOWNLOAD -->
-  <div class="card">
-    <div class="card-title">Скачать клиент</div>
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
-      <div>
-        <div style="font-size:15px;font-weight:700;margin-bottom:4px">Fame Client Installer</div>
-        <div style="font-size:12px;color:var(--dim)" id="releaseInfo">Загрузка информации...</div>
-      </div>
-      <a id="downloadBtn" href="#" onclick="downloadInstaller(event)" class="btn btn-primary" style="gap:8px;padding:11px 22px;font-size:14px">
-        ↓ Скачать
-      </a>
-    </div>
-  </div>
-
+<div class="container" id="mainContainer">
+  <div class="loading-overlay"><div class="spinner"></div> Загрузка...</div>
 </div>
 
 <div class="toast" id="toast"></div>
 
-<script>
-const SUPABASE_URL  = 'https://bobxvjnlouzdhdsifkzr.supabase.co';
-const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJvYnh2am5sb3V6ZGhkc2lma3pyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2NjMwODEsImV4cCI6MjA5MTIzOTA4MX0._2cIv6r4LhpQv4cnQqx4vTJ4cp9tUDINg-IqBLh1S5w';
-// ← ЗАМЕНИ НА СВОИ ADMIN EMAILS
+<!-- ═══ FIREBASE SDK ═══ -->
+<script type="module">
+import { initializeApp }                                          from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getAuth, onAuthStateChanged, signOut, updatePassword, updateEmail } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+// ══════════════════════════════════════════════
+// ЗАМЕНИ ЭТИ ЗНАЧЕНИЯ НА СВОИ ИЗ FIREBASE CONSOLE
+const firebaseConfig = {
+  apiKey: "AIzaSyAiZv5BNz7Kj0-b41LHLB7P3Y_w9BupqqQ",
+  authDomain: "fameclient-a8735.firebaseapp.com",
+  projectId: "fameclient-a8735",
+  storageBucket: "fameclient-a8735.firebasestorage.app",
+  messagingSenderId: "1071684024649",
+  appId: "1:1071684024649:web:e2ccb6a284ba2e4d52c298",
+  measurementId: "G-01XPQE2BPX"
+};
+// ══════════════════════════════════════════════
+
+// ADMIN emails — замени на свои
 const ADMIN_EMAILS = ['whydoulive@yandex.ru', 'semyon.klementev@yandex.ru'];
 
-let session = null;
-
-async function api(path, opts = {}) {
-  const headers = { 'apikey': SUPABASE_ANON, 'Content-Type': 'application/json', ...opts.headers };
-  if (session?.access_token) headers['Authorization'] = 'Bearer ' + session.access_token;
-  const r = await fetch(SUPABASE_URL + path, { ...opts, headers });
-  const text = await r.text();
-  try { return JSON.parse(text); } catch { return text; }
-}
-
-function toast(msg, ok = true) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast show ' + (ok ? 'ok' : 'err');
-  setTimeout(() => t.className = 'toast', 3000);
-}
-
-function logout() {
-  localStorage.removeItem('fame_session');
-  window.location.href = 'index.html';
-}
-
-function formatDate(d) {
-  if (!d) return 'Навсегда';
-  const dt = new Date(d);
-  return dt.toLocaleDateString('ru-RU', { day:'2-digit', month:'2-digit', year:'numeric' });
-}
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
 
 const VERSION_LABELS = {
   '1165_basic':    { label:'Basic 1.16.5',    color:'var(--accent)' },
@@ -217,242 +114,206 @@ const VERSION_LABELS = {
   '1214_lifetime': { label:'Lifetime 1.21.4', color:'var(--gold)' },
 };
 
-async function loadProfile() {
-  const data = await api(`/rest/v1/profiles?user_id=eq.${session.user.id}&select=*`);
-  if (!Array.isArray(data) || data.length === 0) return null;
-  return data[0];
+function toast(msg, ok = true) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + (ok ? 'ok' : 'err');
+  setTimeout(() => t.className = 'toast', 3000);
 }
 
-async function loadSubscriptions() {
-  const now = new Date().toISOString();
-  const data = await api(`/rest/v1/subscriptions?user_id=eq.${session.user.id}&select=*&order=created_at.desc`);
-  return Array.isArray(data) ? data : [];
+function formatDate(d) {
+  if (!d) return 'Навсегда ♾';
+  return new Date(d).toLocaleDateString('ru-RU', { day:'2-digit', month:'2-digit', year:'numeric' });
 }
 
-function renderSubs(subs) {
-  const c = document.getElementById('subsContainer');
-  if (!subs.length) {
-    c.innerHTML = '<div class="empty">Нет активных подписок.</div>';
-    return;
-  }
-  const now = new Date();
-  c.innerHTML = '<div class="grid3">' + subs.map(s => {
-    const info = VERSION_LABELS[s.plan] || { label: s.plan, color: 'var(--dim)' };
-    const expired = s.expires_at && new Date(s.expires_at) < now;
-    const cls = expired ? 'expired' : 'active';
-    return `<div class="sub-card ${cls}">
-      <div class="sub-version" style="color:${info.color}">${info.label}</div>
-      <div class="sub-name">${expired ? 'Истекла' : 'Активна'}</div>
-      <div class="sub-expires" style="margin-top:8px">
-        ${s.expires_at ? `До: <span>${formatDate(s.expires_at)}</span>` : '<span>Навсегда ♾</span>'}
+function renderDashboard(user, profile, subs) {
+  const nick  = profile?.nickname || user.email.split('@')[0];
+  const hwid  = profile?.hwid || 'Не привязан';
+  const email = user.email;
+  const now   = new Date();
+
+  document.getElementById('navNick').textContent = nick;
+  if (ADMIN_EMAILS.includes(email)) document.getElementById('adminBtn').style.display = 'inline-flex';
+
+  const subsHtml = subs.length === 0
+    ? '<div class="empty">Нет активных подписок. <a href="index.html#pricing" style="color:var(--accent)">Купить →</a></div>'
+    : '<div class="grid3">' + subs.map(s => {
+        const info    = VERSION_LABELS[s.plan] || { label: s.plan, color: 'var(--dim)' };
+        const expired = s.expires_at && new Date(s.expires_at) < now;
+        return `<div class="sub-card ${expired ? 'expired' : 'active'}">
+          <div class="sub-version" style="color:${info.color}">${info.label}</div>
+          <div class="sub-name">${expired ? 'Истекла' : 'Активна'}</div>
+          <div class="sub-expires" style="margin-top:8px">
+            ${s.expires_at ? `До: <span>${formatDate(s.expires_at)}</span>` : '<span>Навсегда ♾</span>'}
+          </div>
+        </div>`;
+      }).join('') + '</div>';
+
+  document.getElementById('mainContainer').innerHTML = `
+    <div class="page-title">Личный кабинет</div>
+    <div class="grid2" style="margin-bottom:20px">
+      <div class="card">
+        <div class="card-title">Профиль</div>
+        <div class="profile-row">
+          <div class="avatar">${nick[0]?.toUpperCase() || '?'}</div>
+          <div class="profile-info"><h3>${nick}</h3><p>${email}</p></div>
+        </div>
+        <div style="background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:8px;padding:8px 12px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <div>
+            <div style="font-size:10px;color:var(--muted);margin-bottom:2px">UID (для добавления подписки)</div>
+            <div style="font-family:monospace;font-size:11px;color:var(--dim);word-break:break-all" id="uidBox">${user.uid}</div>
+          </div>
+          <button onclick="navigator.clipboard.writeText('${user.uid}').then(()=>toast('UID скопирован'))" style="flex-shrink:0;background:transparent;border:1px solid var(--border2);color:var(--dim);padding:4px 10px;border-radius:6px;font-size:11px;cursor:pointer;white-space:nowrap">Копировать</button>
+        </div>
+        <div class="field-row">
+          <label>Никнейм в игре</label>
+          <input type="text" id="nicknameInput" value="${nick}" maxlength="32">
+        </div>
+        <button class="btn btn-primary btn-sm" id="saveNickBtn" style="margin-bottom:14px">Сохранить никнейм</button>
+        <div style="border-top:1px solid var(--border);padding-top:12px">
+          <div class="field-row"><label>Новый пароль</label><input type="password" id="newPassInput" placeholder="Минимум 6 символов"></div>
+          <div class="field-row"><label>Повтори пароль</label><input type="password" id="newPassConfirm" placeholder="Повтори пароль"></div>
+          <button class="btn btn-sm" id="changePassBtn" style="border:1px solid var(--border2);color:var(--dim)">Сменить пароль</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">HWID</div>
+        <p style="font-size:12px;color:var(--dim);margin-bottom:10px">Привязан к твоему компьютеру. Сбрось если сменил ПК.</p>
+        <div class="hwid-box" id="hwidBox">${hwid}</div>
+        <button class="btn btn-danger btn-sm" id="resetHwidBtn">Сбросить HWID</button>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:20px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <div class="card-title" style="margin-bottom:0">Мои подписки</div>
+        <a href="index.html#pricing" class="btn btn-primary btn-sm">Купить подписку</a>
+      </div>
+      ${subsHtml}
+    </div>
+    <div class="card">
+      <div class="card-title">Скачать клиент</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+        <div>
+          <div style="font-size:15px;font-weight:700;margin-bottom:4px">Fame Client Installer</div>
+          <div style="font-size:12px;color:var(--dim)" id="releaseInfo">Загрузка...</div>
+        </div>
+        <a id="downloadBtn" href="https://github.com/attacktrip/Fame/releases/latest" target="_blank" class="btn btn-primary" style="padding:11px 22px;font-size:14px">↓ Скачать</a>
       </div>
     </div>`;
-  }).join('') + '</div>';
-}
 
-async function saveNickname() {
-  const nick = document.getElementById('nicknameInput').value.trim();
-  if (!nick) return toast('Введи никнейм', false);
-  await api(`/rest/v1/profiles?user_id=eq.${session.user.id}`, {
-    method: 'PATCH',
-    body: JSON.stringify({ nickname: nick }),
-    headers: { 'Prefer': 'return=minimal' }
-  });
-  // Also update user metadata
-  await api('/auth/v1/user', {
-    method: 'PUT',
-    body: JSON.stringify({ data: { nickname: nick } })
-  });
-  document.getElementById('profileNick').textContent = nick;
-  document.getElementById('navNick').textContent = nick;
-  document.getElementById('avatarLetter').textContent = nick[0].toUpperCase();
-  toast('Никнейм сохранён');
-}
+  // Events
+  document.getElementById('saveNickBtn').onclick = async () => {
+    const nick = document.getElementById('nicknameInput').value.trim();
+    if (!nick) { toast('Введи никнейм', false); return; }
+    await updateDoc(doc(db, 'profiles', user.uid), { nickname: nick });
+    document.getElementById('navNick').textContent = nick;
+    toast('Никнейм сохранён');
+  };
 
-async function resetHwid() {
-  if (!confirm('Сбросить HWID? Следующий вход привяжет новый компьютер.')) return;
-  const r = await fetch(SUPABASE_URL + `/rest/v1/profiles?user_id=eq.${session.user.id}`, {
-    method: 'PATCH',
-    headers: {
-      'apikey': SUPABASE_ANON,
-      'Authorization': 'Bearer ' + session.access_token,
-      'Content-Type': 'application/json',
-      'Prefer': 'return=minimal'
-    },
-    body: JSON.stringify({ hwid: null })
-  });
-  if (r.ok || r.status === 204) {
+  document.getElementById('changePassBtn').onclick = async () => {
+    const p1 = document.getElementById('newPassInput').value;
+    const p2 = document.getElementById('newPassConfirm').value;
+    if (!p1) { toast('Введи новый пароль', false); return; }
+    if (p1.length < 6) { toast('Пароль минимум 6 символов', false); return; }
+    if (p1 !== p2) { toast('Пароли не совпадают', false); return; }
+    try {
+      await updatePassword(user, p1);
+      toast('Пароль изменён');
+      document.getElementById('newPassInput').value = '';
+      document.getElementById('newPassConfirm').value = '';
+    } catch(e) {
+      if (e.code === 'auth/requires-recent-login') toast('Перелогинься и попробуй снова', false);
+      else toast('Ошибка: ' + e.message, false);
+    }
+  };
+
+  document.getElementById('resetHwidBtn').onclick = async () => {
+    if (!confirm('Сбросить HWID? Следующий вход привяжет новый компьютер.')) return;
+    await updateDoc(doc(db, 'profiles', user.uid), { hwid: null });
     document.getElementById('hwidBox').textContent = 'Сброшен — привяжется при следующем входе';
     toast('HWID сброшен');
-  } else {
-    const t = await r.text();
-    toast('Ошибка сброса HWID: ' + r.status, false);
-    console.error('resetHwid:', t);
-  }
+  };
+
+  // Load release info
+  fetch('https://api.github.com/repos/attacktrip/Fame/releases/latest', { headers: { 'Accept': 'application/vnd.github+json' } })
+    .then(r => r.json()).then(d => {
+      const a = d.assets?.find(x => x.name.toLowerCase().endsWith('.exe'));
+      if (a) {
+        document.getElementById('downloadBtn').href = a.browser_download_url;
+        document.getElementById('releaseInfo').textContent = `Версия ${d.tag_name} • ${(a.size/1024/1024).toFixed(1)} MB`;
+      } else {
+        document.getElementById('releaseInfo').textContent = `Версия ${d.tag_name}`;
+      }
+    }).catch(() => { document.getElementById('releaseInfo').textContent = 'Последний релиз на GitHub'; });
 }
 
-async function changeEmail() {
-  const newEmail = document.getElementById('newEmailInput').value.trim();
-  if (!newEmail) { toast('Введи новый email', false); return; }
-  if (!newEmail.includes('@')) { toast('Некорректный email', false); return; }
-  const r = await fetch(SUPABASE_URL + '/auth/v1/user', {
-    method: 'PUT',
-    headers: { 'apikey': SUPABASE_ANON, 'Authorization': 'Bearer ' + session.access_token, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: newEmail })
-  });
-  const d = await r.json();
-  if (r.ok) {
-    toast('Email изменён. Подтверди на новой почте.');
-    document.getElementById('newEmailInput').value = '';
-    // Update profile email too
-    await fetch(SUPABASE_URL + `/rest/v1/profiles?user_id=eq.${session.user.id}`, {
-      method: 'PATCH',
-      headers: { 'apikey': SUPABASE_ANON, 'Authorization': 'Bearer ' + session.access_token, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-      body: JSON.stringify({ email: newEmail })
-    });
-  } else {
-    toast('Ошибка: ' + (d.msg || d.error_description || r.status), false);
-  }
-}
-
-async function changePassword() {
-  const p1 = document.getElementById('newPassInput').value;
-  const p2 = document.getElementById('newPassConfirm').value;
-  if (!p1) { toast('Введи новый пароль', false); return; }
-  if (p1.length < 6) { toast('Пароль минимум 6 символов', false); return; }
-  if (p1 !== p2) { toast('Пароли не совпадают', false); return; }
-  const r = await fetch(SUPABASE_URL + '/auth/v1/user', {
-    method: 'PUT',
-    headers: { 'apikey': SUPABASE_ANON, 'Authorization': 'Bearer ' + session.access_token, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ password: p1 })
-  });
-  if (r.ok) {
-    toast('Пароль изменён');
-    document.getElementById('newPassInput').value = '';
-    document.getElementById('newPassConfirm').value = '';
-  } else {
-    const d = await r.json();
-    toast('Ошибка: ' + (d.msg || d.error_description || r.status), false);
-  }
-}
-
-async function init() {
-  const raw = localStorage.getItem('fame_session');
-  if (!raw) {
-    // Show inline login instead of redirect
-    showDashboardLogin(); return;
-  }
-  try { session = JSON.parse(raw); } catch {
-    showDashboardLogin(); return;
-  }
-  if (!session?.access_token) {
-    showDashboardLogin(); return;
-  }
-
-  const email = session.user?.email || '';
-  document.getElementById('profileEmail').textContent = email;
-
-  const [profile, subs] = await Promise.all([loadProfile(), loadSubscriptions()]);
-
-  const nick = profile?.nickname || session.user?.user_metadata?.nickname || email.split('@')[0];
-  document.getElementById('profileNick').textContent = nick;
-  document.getElementById('navNick').textContent = nick;
-  document.getElementById('nicknameInput').value = nick;
-  document.getElementById('avatarLetter').textContent = nick[0]?.toUpperCase() || '?';
-  document.getElementById('hwidBox').textContent = profile?.hwid || 'Не привязан';
-
-  // Show admin button if admin
-  if (ADMIN_EMAILS.includes(email)) {
-    document.getElementById('adminBtn').style.display = 'inline-flex';
-  }
-
-  renderSubs(subs);
-}
-
-function showDashboardLogin() {
-  document.querySelector('.container').innerHTML = `
+function showLoginForm() {
+  document.getElementById('mainContainer').innerHTML = `
     <div style="display:flex;align-items:center;justify-content:center;min-height:60vh">
       <div style="background:var(--card);border:1px solid var(--border2);border-radius:14px;padding:36px;width:360px;max-width:95vw">
         <h2 style="font-size:20px;font-weight:800;margin-bottom:6px">Войти в кабинет</h2>
         <p style="font-size:13px;color:var(--dim);margin-bottom:20px">Введи данные от аккаунта Fame Client</p>
         <div style="display:flex;flex-direction:column;gap:10px">
           <input id="dEmail" type="email" placeholder="Email" style="background:rgba(0,0,0,.4);border:1px solid var(--border2);border-radius:7px;padding:10px 14px;color:var(--text);font-size:13px;outline:none">
-          <input id="dPass" type="password" placeholder="Пароль" style="background:rgba(0,0,0,.4);border:1px solid var(--border2);border-radius:7px;padding:10px 14px;color:var(--text);font-size:13px;outline:none" onkeydown="if(event.key==='Enter')doDashLogin()">
+          <input id="dPass" type="password" placeholder="Пароль" style="background:rgba(0,0,0,.4);border:1px solid var(--border2);border-radius:7px;padding:10px 14px;color:var(--text);font-size:13px;outline:none" onkeydown="if(event.key==='Enter')document.getElementById('dBtn').click()">
         </div>
         <div id="dErr" style="color:var(--red);font-size:12px;margin-top:8px;min-height:16px"></div>
-        <button id="dBtn" onclick="doDashLogin()" style="width:100%;margin-top:14px;padding:12px;background:var(--accent);border:none;border-radius:8px;color:#fff;font-weight:700;cursor:pointer;font-size:14px">Войти</button>
+        <button id="dBtn" style="width:100%;margin-top:14px;padding:12px;background:var(--accent);border:none;border-radius:8px;color:#fff;font-weight:700;cursor:pointer;font-size:14px">Войти</button>
+        <p style="text-align:center;margin-top:14px;font-size:12px;color:var(--dim)">Нет аккаунта? <a href="index.html#register" style="color:var(--accent)">Зарегистрироваться</a></p>
       </div>
     </div>`;
+
+  // Import signIn dynamically to avoid circular issues
+  import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js').then(({ signInWithEmailAndPassword }) => {
+    document.getElementById('dBtn').onclick = async () => {
+      const email = document.getElementById('dEmail').value.trim();
+      const pass  = document.getElementById('dPass').value;
+      const err   = document.getElementById('dErr');
+      const btn   = document.getElementById('dBtn');
+      err.textContent = '';
+      if (!email || !pass) { err.textContent = 'Заполни все поля'; return; }
+      btn.textContent = 'Входим...'; btn.disabled = true;
+      try {
+        await signInWithEmailAndPassword(auth, email, pass);
+        // onAuthStateChanged подхватит
+      } catch(e) {
+        const msgs = { 'auth/user-not-found':'Пользователь не найден', 'auth/wrong-password':'Неверный пароль', 'auth/invalid-credential':'Неверный email или пароль' };
+        err.textContent = msgs[e.code] || 'Ошибка входа';
+        btn.textContent = 'Войти'; btn.disabled = false;
+      }
+    };
+  });
 }
 
-async function doDashLogin() {
-  const email = document.getElementById('dEmail').value.trim();
-  const pass  = document.getElementById('dPass').value;
-  const err   = document.getElementById('dErr');
-  const btn   = document.getElementById('dBtn');
-  err.textContent = '';
-  if (!email || !pass) { err.textContent = 'Заполни все поля'; return; }
-  btn.textContent = 'Входим...'; btn.disabled = true;
-  try {
-    const r = await fetch(SUPABASE_URL + '/auth/v1/token?grant_type=password', {
-      method: 'POST',
-      headers: { 'apikey': SUPABASE_ANON, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password: pass })
+// ── MAIN ──
+document.getElementById('logoutBtn').onclick = () => signOut(auth).then(() => window.location.href = 'index.html');
+
+onAuthStateChanged(auth, async user => {
+  if (!user) { showLoginForm(); return; }
+
+  // Загружаем профиль и подписки параллельно
+  const [profileSnap, subsSnap] = await Promise.all([
+    getDoc(doc(db, 'profiles', user.uid)),
+    getDocs(query(collection(db, 'subscriptions'), where('user_id', '==', user.uid)))
+  ]);
+
+  const profile = profileSnap.exists() ? profileSnap.data() : null;
+
+  // Если профиля нет — создаём
+  if (!profile) {
+    await setDoc(doc(db, 'profiles', user.uid), {
+      nickname:   user.email.split('@')[0],
+      email:      user.email,
+      hwid:       null,
+      created_at: new Date().toISOString()
     });
-    const d = await r.json();
-    if (!d.access_token) {
-      err.textContent = d.error_description || d.msg || 'Неверный email или пароль';
-      btn.textContent = 'Войти'; btn.disabled = false; return;
-    }
-    localStorage.setItem('fame_session', JSON.stringify(d));
-    window.location.reload();
-  } catch(e) {
-    err.textContent = 'Ошибка соединения';
-    btn.textContent = 'Войти'; btn.disabled = false;
   }
-}
 
-let _downloadUrl = null;
+  const subs = [];
+  subsSnap.forEach(d => subs.push(d.data()));
 
-async function loadRelease() {
-  try {
-    const r = await fetch('https://api.github.com/repos/attacktrip/Fame/releases/latest', {
-      headers: { 'Accept': 'application/vnd.github+json' }
-    });
-    if (!r.ok) throw new Error('GitHub API ' + r.status);
-    const data = await r.json();
-
-    // Find .exe asset
-    const asset = data.assets?.find(a => a.name.toLowerCase().endsWith('.exe'));
-    if (asset) {
-      _downloadUrl = asset.browser_download_url;
-      const size = (asset.size / 1024 / 1024).toFixed(1);
-      document.getElementById('releaseInfo').textContent =
-        `Версия ${data.tag_name} • ${size} MB • ${new Date(data.published_at).toLocaleDateString('ru-RU')}`;
-    } else {
-      // No exe — use zipball or release page
-      _downloadUrl = data.html_url;
-      document.getElementById('releaseInfo').textContent =
-        `Версия ${data.tag_name} • ${new Date(data.published_at).toLocaleDateString('ru-RU')}`;
-    }
-  } catch(e) {
-    // Fallback to releases page
-    _downloadUrl = 'https://github.com/attacktrip/Fame/releases/latest';
-    document.getElementById('releaseInfo').textContent = 'Последний релиз на GitHub';
-  }
-}
-
-function downloadInstaller(e) {
-  e.preventDefault();
-  if (_downloadUrl) {
-    window.open(_downloadUrl, '_blank');
-  } else {
-    window.open('https://github.com/attacktrip/Fame/releases/latest', '_blank');
-  }
-}
-
-init();
-loadRelease();
+  renderDashboard(user, profile, subs);
+});
 </script>
 </body>
 </html>
