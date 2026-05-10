@@ -245,6 +245,11 @@ const ADMIN_EMAIL = 'whydoulive@yandex.ru';
 // Toast notification
 function toast(msg, ok=true) {
   const t = document.getElementById('toast');
+  if (!t) {
+    console.error('[Toast] Element not found');
+    alert(msg);
+    return;
+  }
   t.textContent = msg;
   t.className = 'toast show ' + (ok ? 'ok' : 'err');
   setTimeout(() => t.className = 'toast', 3000);
