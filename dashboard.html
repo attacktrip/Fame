@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru" data-theme="dark">
 <head>
 <meta charset="UTF-8">
@@ -528,10 +528,14 @@ window.logout = async function() {
   }
 };
 
-// Auth state listener
+// Auth state listener with loading timeout
+let authChecked = false;
+
 onAuthStateChanged(auth, async (user) => {
+  authChecked = true;
+  
   if (!user) {
-    // Not logged in - redirect to login
+    // Not logged in - show login prompt
     document.getElementById('mainContent').innerHTML = `
       <div style="text-align:center;padding:60px 20px">
         <div style="font-size:48px;margin-bottom:16px">🔒</div>
@@ -544,8 +548,32 @@ onAuthStateChanged(auth, async (user) => {
   }
   
   currentUser = user;
-  await renderDashboard();
+  try {
+    await renderDashboard();
+  } catch (e) {
+    console.error('Error rendering dashboard:', e);
+    document.getElementById('mainContent').innerHTML = `
+      <div style="text-align:center;padding:60px 20px;color:#f87171">
+        <div style="font-size:48px;margin-bottom:16px">⚠️</div>
+        <h2 style="font-size:20px;margin-bottom:12px">Ошибка загрузки</h2>
+        <p style="margin-bottom:24px">${e.message}</p>
+        <button onclick="location.reload()" class="btn-fill">Перезагрузить</button>
+      </div>`;
+  }
 });
+
+// Fallback: if auth takes too long, show login option
+setTimeout(() => {
+  if (!authChecked) {
+    document.getElementById('mainContent').innerHTML = `
+      <div style="text-align:center;padding:60px 20px">
+        <div style="font-size:48px;margin-bottom:16px">⏳</div>
+        <h2 style="font-size:20px;margin-bottom:12px">Проверка авторизации...</h2>
+        <p style="color:var(--text-color-alower);margin-bottom:24px">Если загрузка занимает слишком долго, попробуйте войти снова</p>
+        <a href="index.html" class="btn-fill">Войти</a>
+      </div>`;
+  }
+}, 5000);
 
 // Theme toggle
 document.getElementById('themeBtn').addEventListener('click', function() {
