@@ -1,0 +1,763 @@
+﻿<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fame Client</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root {
+  --text-color: #ebebeb;
+  --text-color-alower: rgba(255,255,255,.48);
+  --bg-color: #090909;
+  --bg-second-color: #161519;
+  --border-color: rgba(255,255,255,.08);
+  --accent-color: #6d706e;
+  --button-bg: color-mix(in srgb, var(--bg-second-color), black 3.5%);
+  --btn-primary-bg: var(--accent-color);
+  --btn-primary-border: var(--accent-color);
+  --btn-primary-text: #ecf8f6;
+  --transition: all .2s ease-in-out;
+  --border-radius: 7.5px;
+  --lg-radius: 24px;
+  --md-radius: 12px;
+  --sm-radius: 8px;
+  --md-padding: 16px;
+  --sm-padding: 12px;
+  --matte-glass-bg: rgba(255,255,255,.03);
+  --matte-glass-border: rgba(255,255,255,.07);
+  --matte-glass-blur: 18px;
+  --matte-glass-saturate: 140%;
+  --matte-glass-shadow: 0 4px 24px rgba(0,0,0,.18);
+}
+[data-theme="light"] {
+  --text-color: #1f1f1f;
+  --text-color-alower: #5a5a5a;
+  --bg-color: #f8f7f4;
+  --bg-second-color: #efeee9;
+  --border-color: rgba(0,0,0,.08);
+  --accent-color: #6d706e;
+  --button-bg: #e8e7e2;
+  --btn-primary-text: #f2fbfa;
+  --matte-glass-bg: rgba(0,0,0,.03);
+  --matte-glass-border: rgba(0,0,0,.07);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg-color);color:var(--text-color);font-family:"Inter","Segoe UI",system-ui,sans-serif;min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(109,112,110,.5);border-radius:6px}
+
+/* HEADER */
+.header{position:fixed;top:0;left:0;right:0;z-index:1000;height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 40px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);background:rgba(9,9,9,.8);border-bottom:1px solid var(--border-color);transition:var(--transition)}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text-color)}
+.logo-mark{width:28px;height:28px;background:var(--accent-color);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--btn-primary-text);flex-shrink:0}
+.logo-text{font-size:16px;font-weight:600;letter-spacing:-.3px}
+.header-nav{display:flex;align-items:center;gap:4px}
+.header-nav a{color:var(--text-color-alower);text-decoration:none;font-size:14px;padding:6px 12px;border-radius:var(--sm-radius);transition:var(--transition)}
+.header-nav a:hover,.header-nav a.active{color:var(--text-color);background:rgba(255,255,255,.06)}
+.header-right{display:flex;align-items:center;gap:8px}
+.header-auth-link{color:var(--text-color-alower);text-decoration:none;font-size:14px;padding:7px 14px;border-radius:var(--sm-radius);transition:var(--transition)}
+.header-auth-link:hover{color:var(--text-color)}
+.header-auth-primary{background:var(--btn-primary-bg);color:var(--btn-primary-text);text-decoration:none;font-size:13px;font-weight:600;padding:7px 16px;border-radius:var(--sm-radius);border:1px solid var(--btn-primary-border);transition:var(--transition)}
+.header-auth-primary:hover{opacity:.85}
+.header-menu-toggle{display:none;flex-direction:column;gap:5px;background:transparent;border:none;cursor:pointer;padding:6px}
+.header-menu-toggle span{display:block;width:22px;height:2px;background:var(--text-color-alower);border-radius:2px;transition:var(--transition)}
+
+/* FLOATING CONTROLS */
+.floating-controls{position:fixed;bottom:24px;right:24px;z-index:900;display:flex;flex-direction:column;gap:8px}
+.header-utility-btn{width:40px;height:40px;border-radius:12px;border:1px solid var(--border-color);background:var(--button-bg);color:var(--text-color-alower);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;transition:var(--transition);backdrop-filter:blur(12px)}
+.header-utility-btn:hover{color:var(--text-color);border-color:var(--accent-color)}
+
+/* HERO */
+.main-hero{position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 24px 80px;overflow:hidden}
+.hero-glow{position:absolute;top:-30%;left:50%;transform:translateX(-50%);width:1200px;height:900px;background:radial-gradient(ellipse,rgba(109,112,110,.25) 0,rgba(109,112,110,.1) 40%,transparent 70%);pointer-events:none;z-index:0;animation:glow-pulse-large 4s ease-in-out infinite alternate}
+.hero-overlay{position:absolute;inset:0;background:radial-gradient(ellipse 100% 60% at 50% 100%,rgba(9,9,9,.9),transparent);pointer-events:none;z-index:1}
+.hero-aurora-layer{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+.aurora-container{position:absolute;inset:0}
+.hero-aurora-layer canvas{position:absolute;top:0;left:0;width:100%;height:100%;opacity:.55}
+.main-hero>*:not(.hero-glow):not(.hero-overlay):not(.hero-aurora-layer){position:relative;z-index:2}
+.hero-pill{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:999px;background:var(--button-bg);border:1px solid var(--border-color);color:var(--text-color-alower);font-size:12px;letter-spacing:.15em;text-transform:uppercase;margin-bottom:24px}
+.hero-pill-dot{width:6px;height:6px;border-radius:50%;background:var(--accent-color);animation:pulse-dot 2s infinite}
+@keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+@keyframes glow-pulse-large{0%{opacity:.6;transform:translateX(-50%) scale(1)}50%{opacity:1;transform:translateX(-50%) scale(1.1)}100%{opacity:.7;transform:translateX(-50%) scale(1.05)}}
+.main-hero h1{font-size:clamp(38px,6vw,72px);font-weight:600;line-height:1.08;letter-spacing:-2px;color:var(--text-color);margin-bottom:20px;max-width:800px}
+.main-hero .subtext{font-size:17px;color:var(--text-color-alower);max-width:560px;line-height:1.65;margin-bottom:36px}
+.hero-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn-fill{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border-radius:var(--sm-radius);background:var(--btn-primary-bg);color:var(--btn-primary-text);border:1px solid var(--btn-primary-border);font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;transition:var(--transition)}
+.btn-fill:hover{opacity:.85;transform:translateY(-1px)}
+.btn-outline{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border-radius:var(--sm-radius);background:transparent;color:var(--text-color);border:1px solid var(--border-color);font-size:14px;font-weight:500;cursor:pointer;text-decoration:none;transition:var(--transition)}
+.btn-outline:hover{border-color:var(--accent-color);color:var(--text-color)}
+
+/* FEATURES SECTION */
+.features-section{position:relative;z-index:2;padding:80px 24px;max-width:1100px;margin:0 auto}
+.features-header{text-align:center;margin-bottom:48px}
+.features-title{font-size:clamp(28px,4vw,44px);font-weight:600;letter-spacing:-1px;color:var(--text-color);margin-bottom:12px}
+.features-subtitle{color:var(--text-color-alower);font-size:16px}
+.feature-cards-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.feature-panel{background:var(--matte-glass-bg);backdrop-filter:blur(var(--matte-glass-blur));-webkit-backdrop-filter:blur(var(--matte-glass-blur));border:1px solid var(--matte-glass-border);border-radius:20px;overflow:hidden;transition:var(--transition)}
+.feature-panel:hover{border-color:rgba(109,112,110,.35);transform:translateY(-3px)}
+.feature-panel-visual{position:relative;height:150px;overflow:hidden;background:rgba(255,255,255,.02)}
+.feature-panel-visual-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:32px 32px}
+.feature-card-shader{position:absolute;inset:0}
+.feature-card-shader canvas{width:100%!important;height:100%!important}
+.feature-panel-badge{position:absolute;top:12px;right:12px;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:var(--text-color);font-size:11px;font-weight:700;letter-spacing:.08em}
+.feature-panel-badge-live{background:rgba(109,112,110,.2);border-color:rgba(109,112,110,.4);color:var(--accent-color)}
+.feature-panel-icon{position:absolute;bottom:14px;left:16px;width:38px;height:38px;border-radius:12px;background:rgba(109,112,110,.15);border:1px solid rgba(109,112,110,.25);display:flex;align-items:center;justify-content:center;color:var(--accent-color);font-size:16px}
+.feature-panel-content{padding:20px}
+.feature-panel-index{font-size:11px;color:var(--text-color-alower);letter-spacing:.15em;display:block;margin-bottom:6px}
+.feature-panel-content h3{font-size:17px;font-weight:600;color:var(--text-color);margin-bottom:8px}
+.feature-panel-title-arrow{color:var(--accent-color);margin-right:4px}
+.feature-panel-content p{font-size:13px;color:var(--text-color-alower);line-height:1.6;margin-bottom:8px}
+.feature-panel-detail{font-size:12px;color:rgba(255,255,255,.3)!important}
+.feature-panel-highlight{color:var(--text-color)!important;font-weight:600}
+
+/* PRICING SECTION */
+.pricing-section{position:relative;z-index:2;padding:80px 24px;max-width:1100px;margin:0 auto}
+.section-header{text-align:center;margin-bottom:48px}
+.section-title-text{font-size:clamp(28px,4vw,44px);font-weight:600;letter-spacing:-1px;color:var(--text-color);margin-bottom:12px}
+.section-subtitle{color:var(--text-color-alower);font-size:16px}
+.version-tabs{display:flex;gap:8px;justify-content:center;margin-bottom:36px;flex-wrap:wrap}
+.vtab{padding:8px 20px;border-radius:var(--sm-radius);border:1px solid var(--border-color);background:var(--button-bg);color:var(--text-color-alower);font-size:13px;font-weight:500;cursor:pointer;transition:var(--transition)}
+.vtab.active,.vtab:hover{background:var(--accent-color);border-color:var(--accent-color);color:var(--btn-primary-text)}
+.version-panel{display:none}
+.version-panel.active{display:block}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,minmax(320px,1fr));gap:28px;max-width:1100px;margin:0 auto;padding:0 20px}
+.price-card{background:var(--matte-glass-bg);backdrop-filter:blur(var(--matte-glass-blur));-webkit-backdrop-filter:blur(var(--matte-glass-blur));border:1px solid var(--matte-glass-border);border-radius:20px;padding:32px;display:flex;flex-direction:column;position:relative;transition:var(--transition)}
+.price-card:hover{border-color:rgba(109,112,110,.3);transform:translateY(-3px)}
+.price-card.featured{border-color:rgba(109,112,110,.4);background:linear-gradient(135deg,rgba(109,112,110,.08),var(--matte-glass-bg))}
+.price-card.lifetime{border-color:rgba(255,255,255,.15)}
+.price-badge{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--accent-color);color:var(--btn-primary-text);font-size:11px;font-weight:700;padding:3px 14px;border-radius:999px;white-space:nowrap;letter-spacing:.05em}
+.price-badge-gold{background:linear-gradient(135deg,#c9a227,#e8c547);color:#000}
+.card-version-label{font-size:11px;font-weight:700;color:var(--accent-color);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}
+.card-name{font-size:20px;font-weight:600;color:var(--text-color);margin-bottom:18px}
+.card-price-row{display:flex;align-items:baseline;gap:4px;margin-bottom:4px}
+.card-price-num{font-size:44px;font-weight:700;line-height:1;color:var(--text-color);letter-spacing:-2px}
+.card-price-cur{font-size:20px;color:var(--text-color-alower)}
+.card-price-period{font-size:12px;color:var(--text-color-alower);margin-bottom:24px}
+.card-btn{display:block;width:100%;padding:11px;border-radius:var(--sm-radius);border:1px solid var(--border-color);background:var(--button-bg);color:var(--text-color);font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;text-align:center;transition:var(--transition);margin-top:auto}
+.card-btn:hover{border-color:var(--accent-color);color:var(--text-color)}
+.price-card.featured .card-btn{background:var(--accent-color);border-color:var(--accent-color);color:var(--btn-primary-text)}
+.price-card.lifetime .card-btn{background:linear-gradient(135deg,rgba(201,162,39,.2),rgba(232,197,71,.1));border-color:rgba(201,162,39,.4);color:#e8c547}
+
+/* VIDEO SECTION */
+.video-section{position:relative;z-index:2;padding:80px 24px;max-width:900px;margin:0 auto;text-align:center}
+.video-title{font-size:clamp(26px,4vw,40px);font-weight:600;letter-spacing:-1px;color:var(--text-color);margin-bottom:12px}
+.video-subtitle{color:var(--text-color-alower);font-size:15px;margin-bottom:32px}
+.video-player{border-radius:20px;overflow:hidden;border:1px solid var(--border-color);background:#000;aspect-ratio:16/9}
+.video-player iframe{width:100%;height:100%;border:none;display:block}
+
+/* FOOTER */
+.footer{position:relative;z-index:2;border-top:1px solid var(--border-color);padding:48px 40px 32px;margin-top:40px}
+.footer-container{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin-bottom:32px}
+.footer-column-title{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--text-color-alower);text-transform:uppercase;letter-spacing:.12em;margin-bottom:14px}
+.footer-column nav{display:flex;flex-direction:column;gap:8px}
+.footer-column nav a,.footer-column nav span{color:var(--text-color-alower);text-decoration:none;font-size:13px;transition:var(--transition);display:flex;align-items:center;gap:6px}
+.footer-column nav a:hover{color:var(--text-color)}
+.footer-line{max-width:1100px;margin:0 auto 24px;height:1px;background:var(--border-color)}
+.footer-bottom{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.footer-logo{text-decoration:none}
+.footer-logo-text{font-size:15px;font-weight:600;color:var(--text-color-alower);letter-spacing:-.3px}
+.footer-bottom>div{font-size:12px;color:var(--text-color-alower)}
+
+/* AUTH MODAL */
+.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);z-index:2000;align-items:center;justify-content:center;padding:24px}
+.modal-backdrop.open{display:flex}
+.auth-card{background:rgba(16,16,18,.95);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:28px;width:100%;max-width:380px;position:relative;box-shadow:0 24px 56px rgba(0,0,0,.5)}
+.auth-tabs{display:flex;gap:4px;margin-bottom:22px;background:rgba(0,0,0,.3);border-radius:10px;padding:4px}
+.auth-tab{flex:1;padding:8px;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;background:transparent;color:var(--text-color-alower);transition:var(--transition);display:flex;align-items:center;justify-content:center;gap:6px}
+.auth-tab.active{background:var(--accent-color);color:var(--btn-primary-text)}
+.auth-form{display:flex;flex-direction:column;gap:12px}
+.auth-field{display:flex;flex-direction:column;gap:5px}
+.auth-field label{font-size:12px;color:var(--text-color-alower)}
+.auth-input-wrapper{position:relative;display:flex;align-items:center}
+.auth-input-wrapper i{position:absolute;left:12px;color:var(--text-color-alower);font-size:13px;pointer-events:none}
+.auth-input-wrapper input{width:100%;padding:10px 12px 10px 36px;background:rgba(0,0,0,.35);border:1px solid var(--border-color);border-radius:var(--sm-radius);color:var(--text-color);font-size:13px;outline:none;transition:var(--transition)}
+.auth-input-wrapper input:focus{border-color:var(--accent-color)}
+.auth-error{color:#f87171;font-size:12px;min-height:16px}
+.auth-submit{width:100%;justify-content:center;margin-top:4px}
+.modal-close{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:8px;border:1px solid var(--border-color);background:transparent;color:var(--text-color-alower);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:var(--transition)}
+.modal-close:hover{color:var(--text-color);border-color:rgba(255,255,255,.2)}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:rgba(22,21,25,.95);border:1px solid var(--border-color);border-radius:12px;padding:12px 20px;font-size:13px;z-index:9999;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.toast.ok{border-color:rgba(124,255,164,.4);color:#7cffb3}
+.toast.err{border-color:rgba(248,113,113,.4);color:#f87171}
+
+/* ANIMATIONS */
+@keyframes fadeInUp{
+  from{opacity:0;transform:translateY(40px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes fadeInScale{
+  from{opacity:0;transform:scale(.95)}
+  to{opacity:1;transform:scale(1)}
+}
+@keyframes slideInLeft{
+  from{opacity:0;transform:translateX(-30px)}
+  to{opacity:1;transform:translateX(0)}
+}
+@keyframes slideInRight{
+  from{opacity:0;transform:translateX(30px)}
+  to{opacity:1;transform:translateX(0)}
+}
+@keyframes float{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-10px)}
+}
+@keyframes glow-pulse{
+  0%,100%{box-shadow:0 0 20px rgba(109,112,110,.3)}
+  50%{box-shadow:0 0 40px rgba(109,112,110,.6)}
+}
+@keyframes shimmer{
+  0%{background-position:-200% 0}
+  100%{background-position:200% 0}
+}
+.animate-fadeInUp{animation:fadeInUp .8s ease-out forwards;opacity:0}
+.animate-fadeInScale{animation:fadeInScale .6s ease-out forwards;opacity:0}
+.animate-slideInLeft{animation:slideInLeft .7s ease-out forwards;opacity:0}
+.animate-slideInRight{animation:slideInRight .7s ease-out forwards;opacity:0}
+.animate-float{animation:float 4s ease-in-out infinite}
+.animate-glow-pulse{animation:glow-pulse 2s ease-in-out infinite}
+.delay-100{animation-delay:.1s}
+.delay-200{animation-delay:.2s}
+.delay-300{animation-delay:.3s}
+.delay-400{animation-delay:.4s}
+.delay-500{animation-delay:.5s}
+
+/* Hover animations */
+.feature-panel,.price-card{transition:all .4s cubic-bezier(.4,0,.2,1)}
+.feature-panel:hover,.price-card:hover{transform:translateY(-8px) scale(1.02);box-shadow:0 20px 40px rgba(0,0,0,.3)}
+.price-card.featured:hover{box-shadow:0 20px 40px rgba(109,112,110,.15)}
+.price-card.lifetime:hover{box-shadow:0 20px 40px rgba(201,162,39,.2)}
+.card-btn{position:relative;overflow:hidden;transition:all .3s ease}
+.card-btn::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);transition:left .5s}
+.card-btn:hover::before{left:100%}
+.btn-fill,.btn-outline{transition:all .3s cubic-bezier(.4,0,.2,1)}
+.btn-fill:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(109,112,110,.4)}
+.btn-outline:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(255,255,255,.1)}
+
+/* Logo animation */
+.logo-text{transition:all .3s ease}
+.logo:hover .logo-text{letter-spacing:2px;text-shadow:0 0 20px rgba(109,112,110,.5)}
+
+/* Nav link hover */
+.header-nav a{position:relative}
+.header-nav a::after{content:'';position:absolute;bottom:-2px;left:50%;width:0;height:2px;background:var(--accent-color);transition:all .3s;transform:translateX(-50%);border-radius:2px}
+.header-nav a:hover::after{width:80%}
+
+/* Feature panel icon animation */
+.feature-panel-icon{transition:all .3s ease}
+.feature-panel:hover .feature-panel-icon{transform:scale(1.1) rotate(5deg);background:rgba(109,112,110,.25)}
+
+/* Price shimmer effect */
+.card-price-num{background:linear-gradient(90deg,var(--text-color),rgba(255,255,255,.5),var(--text-color));background-size:200% 100%;-webkit-background-clip:text;background-clip:text;animation:shimmer 3s infinite}
+
+/* Scroll reveal animation */
+.reveal{opacity:0;transform:translateY(30px);transition:all .6s cubic-bezier(.4,0,.2,1)}
+.reveal.active{opacity:1;transform:translateY(0)}
+
+/* Particle background */
+.particles{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.4}
+
+/* RESPONSIVE */
+@media(max-width:1100px){
+  .pricing-grid{grid-template-columns:repeat(2,minmax(300px,1fr));max-width:700px}
+}
+@media(max-width:900px){
+  .feature-cards-grid{grid-template-columns:1fr}
+  .pricing-grid{grid-template-columns:repeat(2,minmax(280px,1fr));max-width:600px;gap:20px}
+  .price-card{padding:24px}
+  .header{padding:0 20px}
+  .header-nav{display:none}
+  .header-menu-toggle{display:flex}
+  .footer-container{grid-template-columns:1fr}
+  .footer{padding:32px 20px 24px}
+}
+@media(max-width:600px){
+  .pricing-grid{grid-template-columns:1fr;max-width:380px}
+  .price-card{padding:22px}
+  .main-hero{padding:100px 16px 60px}
+  .features-section,.pricing-section,.video-section{padding:60px 16px}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <a class="logo" href="index.html">
+    <span class="logo-text">Fame Client</span>
+  </a>
+  <button class="header-menu-toggle" type="button" aria-label="Меню" id="menuToggle">
+    <span></span><span></span><span></span>
+  </button>
+  <nav class="header-nav" id="headerNav">
+    <a class="active" href="index.html">Главная</a>
+    <a href="#pricing">Цены</a>
+    <a href="#features">Функции</a>
+    <a href="https://t.me/fameoftrip" target="_blank">Telegram</a>
+  </nav>
+  <div class="header-right">
+    <div class="header-auth-actions" id="headerAuth">
+      <a class="header-auth-link" href="#" onclick="openModal('login');return false">Войти</a>
+      <a class="header-auth-primary" href="#" onclick="openModal('reg');return false">Регистрация</a>
+    </div>
+  </div>
+</header>
+
+<!-- FLOATING CONTROLS -->
+<div class="floating-controls" aria-label="Appearance controls">
+  <button class="header-utility-btn floating-theme-btn" type="button" aria-label="Переключить тему" id="themeBtn">
+    <i class="fa-regular fa-moon"></i>
+  </button>
+</div>
+
+<!-- HERO -->
+<main class="main-hero">
+  <div class="hero-glow"></div>
+  <div class="hero-aurora-layer" aria-hidden="true">
+    <div class="aurora-container">
+      <canvas id="auroraCanvas"></canvas>
+    </div>
+  </div>
+  <div class="hero-overlay"></div>
+
+  <div class="hero-pill">
+    <span class="hero-pill-dot"></span>
+    Minecraft 1.21.4
+  </div>
+  <h1>Почувствуй превосходство<br>с Fame Client</h1>
+  <p class="subtext">Мощный чит-клиент для 1.21.4. Обходит античиты, стабильная работа, красивый интерфейс.</p>
+  <div class="hero-actions">
+    <button class="btn-fill" type="button" onclick="openModal('reg')">
+      <i class="fa-regular fa-circle-user"></i>Начать
+    </button>
+    <a class="btn-outline" href="https://t.me/fameoftrip" target="_blank">
+      <i class="fa-solid fa-ticket"></i>Связаться
+    </a>
+  </div>
+</main>
+
+<!-- FEATURES -->
+<section class="features-section" id="features">
+  <div class="features-header">
+    <h2 class="features-title">Почему выбирают нас</h2>
+    <p class="features-subtitle">Всё, что нужно для идеального опыта</p>
+  </div>
+  <div class="feature-cards-grid">
+    <article class="feature-panel feature-panel-community">
+      <div class="feature-panel-visual" aria-hidden="true">
+        <div class="feature-panel-visual-grid"></div>
+        <span class="feature-panel-badge feature-panel-badge-live">LIVE</span>
+        <span class="feature-panel-icon"><i class="fa-solid fa-users"></i></span>
+      </div>
+      <div class="feature-panel-content">
+        <span class="feature-panel-index">01</span>
+        <h3><span class="feature-panel-title-arrow">-&gt;</span>Combat</h3>
+        <p>KillAura, CriticalHit, AutoClicker, Reach, Velocity и другие боевые модули.</p>
+        <p class="feature-panel-detail">Точная настройка каждого параметра под любой сервер и стиль игры.</p>
+      </div>
+    </article>
+    <article class="feature-panel feature-panel-updates">
+      <div class="feature-panel-visual" aria-hidden="true">
+        <div class="feature-panel-visual-grid"></div>
+        <span class="feature-panel-badge">SOON</span>
+        <span class="feature-panel-icon"><i class="fa-solid fa-arrows-rotate"></i></span>
+      </div>
+      <div class="feature-panel-content">
+        <span class="feature-panel-index">02</span>
+        <h3><span class="feature-panel-title-arrow">-&gt;</span>Обновления</h3>
+        <p>Регулярные обновления, свежие обходы и заметные улучшения по геймплею.</p>
+        <p class="feature-panel-detail">Новые функции и хотфиксы выходят быстро, чтобы клиент всегда был актуальным.</p>
+      </div>
+    </article>
+    <article class="feature-panel feature-panel-support">
+      <div class="feature-panel-visual" aria-hidden="true">
+        <div class="feature-panel-visual-grid"></div>
+        <span class="feature-panel-badge">24/7</span>
+        <span class="feature-panel-icon"><i class="fa-solid fa-headset"></i></span>
+      </div>
+      <div class="feature-panel-content">
+        <span class="feature-panel-index">03</span>
+        <h3><span class="feature-panel-title-arrow">-&gt;</span>Поддержка</h3>
+        <p>Команда всегда готова помочь с настройкой, доступом и вопросами.</p>
+        <p class="feature-panel-detail">Прямая помощь по запуску, устранению проблем и аккаунту без долгого ожидания.</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing-section" id="pricing">
+  <div class="section-header">
+    <h2 class="section-title-text">Выбери свой план</h2>
+    <p class="section-subtitle">Доступные подписки для каждой версии Minecraft</p>
+  </div>
+  <div class="pricing-grid">
+    <div class="pricing-grid">
+      <div class="price-card">
+        <div class="card-version-label">1.21.4</div>
+        <div class="card-name">Basic</div>
+        <div class="card-price-row"><span class="card-price-num">599</span><span class="card-price-cur">₽</span></div>
+        <div class="card-price-period">в месяц</div>
+        <a class="card-btn" href="https://funpay.com/lots/offer?id=67288093" target="_blank">Купить на FunPay</a>
+      </div>
+      <div class="price-card featured">
+        <div class="price-badge">Популярное</div>
+        <div class="card-version-label">1.21.4</div>
+        <div class="card-name">Premium</div>
+        <div class="card-price-row"><span class="card-price-num">799</span><span class="card-price-cur">₽</span></div>
+        <div class="card-price-period">в месяц</div>
+        <a class="card-btn" href="https://funpay.com/lots/offer?id=67288226" target="_blank">Купить на FunPay</a>
+      </div>
+      <div class="price-card lifetime">
+        <div class="price-badge price-badge-gold">Навсегда</div>
+        <div class="card-version-label">1.21.4</div>
+        <div class="card-name">Lifetime</div>
+        <div class="card-price-row"><span class="card-price-num">999</span><span class="card-price-cur">₽</span></div>
+        <div class="card-price-period">единоразово</div>
+        <a class="card-btn" href="https://funpay.com/lots/offer?id=67287953" target="_blank">Купить на FunPay</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VIDEO -->
+<section class="video-section">
+  <h2 class="video-title">Смотрите наш клиент<br>в действии</h2>
+  <p class="video-subtitle">Узнайте, как Fame Client работает в реальном геймплее</p>
+  <div class="video-player">
+    <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+      title="Fame Client Demo"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen></iframe>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-container">
+    <div class="footer-column">
+      <div class="footer-column-title"><i class="fa-solid fa-house"></i>Страницы</div>
+      <nav>
+        <a href="index.html">Главная</a>
+        <a href="#pricing">Цены</a>
+        <a href="#features">Функции</a>
+      </nav>
+    </div>
+    <div class="footer-column">
+      <div class="footer-column-title"><i class="fa-brands fa-telegram"></i>Связь</div>
+      <nav>
+        <a href="https://t.me/fameoftrip" target="_blank"><i class="fa-brands fa-telegram"></i> Telegram</a>
+      </nav>
+    </div>
+    <div class="footer-column">
+      <div class="footer-column-title"><i class="fa-solid fa-user"></i>Аккаунт</div>
+      <nav>
+        <span style="cursor:pointer" onclick="openModal('login')">Войти</span>
+        <span style="cursor:pointer" onclick="openModal('reg')">Регистрация</span>
+      </nav>
+    </div>
+  </div>
+  <div class="footer-line"></div>
+  <div class="footer-bottom">
+    <a class="footer-logo" href="index.html"><span class="footer-logo-text">Fame Client</span></a>
+    <div>© Fame Client, 2025. Все права защищены</div>
+  </div>
+</footer>
+
+<!-- AUTH MODAL -->
+<div class="modal-backdrop" id="authModal">
+  <div class="auth-card">
+    <button class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tabLogin" onclick="switchTab('login')">
+        <i class="fa-solid fa-door-open"></i>Вход
+      </button>
+      <button class="auth-tab" id="tabReg" onclick="switchTab('reg')">
+        <i class="fa-regular fa-circle-user"></i>Регистрация
+      </button>
+    </div>
+    <div id="formLogin">
+      <form class="auth-form" onsubmit="doLogin();return false">
+        <div class="auth-field">
+          <label for="lEmail">Email</label>
+          <div class="auth-input-wrapper">
+            <i class="fa-regular fa-envelope"></i>
+            <input id="lEmail" type="email" placeholder="Введите email">
+          </div>
+        </div>
+        <div class="auth-field">
+          <label for="lPass">Пароль</label>
+          <div class="auth-input-wrapper">
+            <i class="fa-solid fa-lock"></i>
+            <input id="lPass" type="password" placeholder="Введите пароль">
+          </div>
+        </div>
+        <div class="auth-error" id="lErr"></div>
+        <button type="submit" class="btn-fill auth-submit" id="lBtn">
+          <i class="fa-solid fa-door-open"></i>Войти
+        </button>
+      </form>
+    </div>
+    <div id="formReg" style="display:none">
+      <form class="auth-form" onsubmit="doRegister();return false">
+        <div class="auth-field">
+          <label for="rEmail">Email</label>
+          <div class="auth-input-wrapper">
+            <i class="fa-regular fa-envelope"></i>
+            <input id="rEmail" type="email" placeholder="Введите email">
+          </div>
+        </div>
+        <div class="auth-field">
+          <label for="rPass">Пароль</label>
+          <div class="auth-input-wrapper">
+            <i class="fa-solid fa-lock"></i>
+            <input id="rPass" type="password" placeholder="Минимум 6 символов">
+          </div>
+        </div>
+        <div class="auth-field">
+          <label for="rNick">Никнейм в Minecraft</label>
+          <div class="auth-input-wrapper">
+            <i class="fa-solid fa-gamepad"></i>
+            <input id="rNick" type="text" placeholder="Ваш никнейм">
+          </div>
+        </div>
+        <div class="auth-error" id="rErr"></div>
+        <button type="submit" class="btn-fill auth-submit" id="rBtn">
+          <i class="fa-regular fa-circle-user"></i>Создать аккаунт
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, browserLocalPersistence, setPersistence } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import { getFirestore, doc, setDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+const firebaseConfig={
+  apiKey:"AIzaSyAiZv5BNz7Kj0-b41LHLB7P3Y_w9BupqqQ",
+  authDomain:"fameclient-a8735.firebaseapp.com",
+  projectId:"fameclient-a8735",
+  storageBucket:"fameclient-a8735.firebasestorage.app",
+  messagingSenderId:"1071684024649",
+  appId:"1:1071684024649:web:e2ccb6a284ba2e4d52c298",
+  measurementId:"G-01XPQE2BPX"
+};
+
+console.log('[Firebase] Initializing...');
+const app=initializeApp(firebaseConfig);
+console.log('[Firebase] App initialized:', app.name);
+
+const auth=getAuth(app);
+const db=getFirestore(app);
+
+console.log('[Firebase] Auth instance created');
+
+setPersistence(auth,browserLocalPersistence)
+  .then(() => console.log('[Firebase] Persistence set to LOCAL'))
+  .catch(e => console.error('[Firebase] Persistence error:', e));
+
+onAuthStateChanged(auth,user=>{
+  console.log('[Firebase] Auth state changed:', user ? 'User: ' + user.email : 'No user');
+  if(user){
+    document.getElementById('headerAuth').innerHTML='<a class="header-profile-link" href="dashboard.html" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--text-color);font-size:14px;padding:6px 12px;border-radius:8px;border:1px solid var(--border-color);background:var(--button-bg)"><i class="fa-solid fa-user"></i>Профиль</a>';
+  } else {
+    document.getElementById('headerAuth').innerHTML='<a class="header-auth-link" href="#" onclick="openModal(\'login\');return false">Войти</a><a class="header-auth-primary" href="#" onclick="openModal(\'reg\');return false">Регистрация</a>';
+  }
+});
+window.openModal=(tab)=>{
+  const user=auth.currentUser;
+  if(user){window.location.href='dashboard.html';return;}
+  document.getElementById('authModal').classList.add('open');
+  switchTab(tab||'login');
+};
+window.closeModal=()=>document.getElementById('authModal').classList.remove('open');
+window.switchTab=(t)=>{
+  const isL=t==='login';
+  document.getElementById('formLogin').style.display=isL?'':'none';
+  document.getElementById('formReg').style.display=isL?'none':'';
+  document.getElementById('tabLogin').classList.toggle('active',isL);
+  document.getElementById('tabReg').classList.toggle('active',!isL);
+  document.getElementById('lErr').textContent='';
+  document.getElementById('rErr').textContent='';
+};
+window.doLogin=async()=>{
+  const email=document.getElementById('lEmail').value.trim();
+  const pass=document.getElementById('lPass').value;
+  const err=document.getElementById('lErr');
+  const btn=document.getElementById('lBtn');
+  err.textContent='';
+  if(!email||!pass){err.textContent='Заполни все поля';return;}
+  btn.disabled=true;btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i>Входим...';
+  try{await signInWithEmailAndPassword(auth,email,pass);window.location.href='dashboard.html';}
+  catch(e){
+    const msgs={'auth/user-not-found':'Пользователь не найден','auth/wrong-password':'Неверный пароль','auth/invalid-credential':'Неверный email или пароль','auth/too-many-requests':'Слишком много попыток'};
+    err.textContent=msgs[e.code]||'Ошибка входа';
+    btn.disabled=false;btn.innerHTML='<i class="fa-solid fa-door-open"></i>Войти';
+  }
+};
+window.doRegister=async()=>{
+  const email=document.getElementById('rEmail').value.trim();
+  const pass=document.getElementById('rPass').value;
+  const nick=document.getElementById('rNick').value.trim();
+  const err=document.getElementById('rErr');
+  const btn=document.getElementById('rBtn');
+  err.textContent='';
+  if(!email||!pass||!nick){err.textContent='Заполни все поля';return;}
+  if(pass.length<6){err.textContent='Пароль минимум 6 символов';return;}
+  btn.disabled=true;btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i>Создаём...';
+  try{
+    const cred=await createUserWithEmailAndPassword(auth,email,pass);
+    await setDoc(doc(db,'profiles',cred.user.uid),{nickname:nick,email:email,hwid:null,created_at:new Date().toISOString()});
+    window.location.href='dashboard.html';
+  }catch(e){
+    const msgs={'auth/email-already-in-use':'Email уже используется','auth/invalid-email':'Некорректный email','auth/weak-password':'Пароль слишком простой'};
+    err.textContent=msgs[e.code]||'Ошибка регистрации';
+    btn.disabled=false;btn.innerHTML='<i class="fa-regular fa-circle-user"></i>Создать аккаунт';
+  }
+};
+</script>
+<script>
+function showVersion(id,btn){
+  document.querySelectorAll('.version-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.vtab').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+document.getElementById('authModal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+document.getElementById('themeBtn').addEventListener('click',function(){
+  const html=document.documentElement;
+  const isDark=html.getAttribute('data-theme')==='dark';
+  html.setAttribute('data-theme',isDark?'light':'dark');
+  this.innerHTML=isDark?'<i class="fa-regular fa-sun"></i>':'<i class="fa-regular fa-moon"></i>';
+});
+document.getElementById('menuToggle').addEventListener('click',function(){
+  document.getElementById('headerNav').classList.toggle('open');
+});
+// Aurora canvas animation
+(function(){
+  const canvas=document.getElementById('auroraCanvas');
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  let w,h,t=0;
+  function resize(){w=canvas.width=canvas.offsetWidth;h=canvas.height=canvas.offsetHeight;}
+  resize();window.addEventListener('resize',resize);
+  function draw(){
+    ctx.clearRect(0,0,w,h);
+    for(let i=0;i<3;i++){
+      const x=w*(0.3+i*0.2+Math.sin(t*0.0008+i)*0.15);
+      const y=h*(0.4+Math.cos(t*0.0006+i*1.2)*0.25);
+      const r=Math.min(w,h)*(0.35+Math.sin(t*0.001+i)*0.1);
+      const g=ctx.createRadialGradient(x,y,0,x,y,r);
+      g.addColorStop(0,'rgba(109,112,110,0.22)');
+      g.addColorStop(1,'rgba(109,112,110,0)');
+      ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();
+    }
+    t++;requestAnimationFrame(draw);
+  }
+  draw();
+})();
+if(window.location.hash==='#register'){openModal('reg');}
+
+// Scroll reveal animation
+const observerOptions={threshold:.1,rootMargin:'0px 0px -50px 0px'};
+const observer=new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      entry.target.classList.add('active');
+      observer.unobserve(entry.target);
+    }
+  });
+},observerOptions);
+document.querySelectorAll('.reveal, .feature-panel, .price-card, .section-header').forEach(el=>{
+  el.classList.add('reveal');
+  observer.observe(el);
+});
+
+// Stagger animation for cards
+const cards=document.querySelectorAll('.feature-panel, .price-card');
+cards.forEach((card,index)=>{
+  card.style.transitionDelay=`${index*.1}s`;
+});
+
+// Parallax effect for hero
+window.addEventListener('scroll',()=>{
+  const scrolled=window.pageYOffset;
+  const hero=document.querySelector('.main-hero');
+  if(hero){
+    hero.style.transform=`translateY(${scrolled*.3}px)`;
+  }
+});
+
+// Mouse follow glow effect
+document.addEventListener('mousemove',(e)=>{
+  const cards=document.querySelectorAll('.price-card, .feature-panel');
+  cards.forEach(card=>{
+    const rect=card.getBoundingClientRect();
+    const x=e.clientX-rect.left;
+    const y=e.clientY-rect.top;
+    if(x>=0&&x<=rect.width&&y>=0&&y<=rect.height){
+      card.style.setProperty('--mouse-x',`${x}px`);
+      card.style.setProperty('--mouse-y',`${y}px`);
+    }
+  });
+});
+
+// Particle system
+const canvas=document.getElementById('auroraCanvas');
+if(canvas){
+  const ctx=canvas.getContext('2d');
+  canvas.width=window.innerWidth;
+  canvas.height=window.innerHeight;
+  const particles=[];
+  const particleCount=50;
+  for(let i=0;i<particleCount;i++){
+    particles.push({
+      x:Math.random()*canvas.width,
+      y:Math.random()*canvas.height,
+      radius:Math.random()*2+1,
+      speedX:Math.random()*.5-.25,
+      speedY:Math.random()*.5-.25,
+      opacity:Math.random()*.5+.2
+    });
+  }
+  let animationId;
+  function animateParticles(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    particles.forEach(p=>{
+      p.x+=p.speedX;
+      p.y+=p.speedY;
+      if(p.x<0||p.x>canvas.width)p.speedX*=-1;
+      if(p.y<0||p.y>canvas.height)p.speedY*=-1;
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.radius,0,Math.PI*2);
+      ctx.fillStyle=`rgba(109,112,110,${p.opacity})`;
+      ctx.fill();
+    });
+    animationId=requestAnimationFrame(animateParticles);
+  }
+  animateParticles();
+  window.addEventListener('resize',()=>{
+    canvas.width=window.innerWidth;
+    canvas.height=window.innerHeight;
+  });
+}
+
+// Smooth scroll for navigation
+document.querySelectorAll('a[href^="#"]').forEach(anchor=>{
+  anchor.addEventListener('click',function(e){
+    e.preventDefault();
+    const target=document.querySelector(this.getAttribute('href'));
+    if(target){
+      target.scrollIntoView({behavior:'smooth',block:'start'});
+    }
+  });
+});
