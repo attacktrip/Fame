@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru" data-theme="dark">
 <head>
 <meta charset="UTF-8">
@@ -421,23 +421,17 @@ async function renderDashboard() {
         <!-- HWID Tab -->
         <div class="tab-panel" id="tab-hwid">
           <div class="dashboard-card animate-fadeInUp">
-            <div class="card-title"><i class="fa-solid fa-computer"></i>Привязка устройства (HWID)</div>
+            <div class="card-title"><i class="fa-solid fa-computer"></i>Устройство (HWID)</div>
+            <p style="font-size:13px;color:var(--text-color-alower);margin-bottom:16px;line-height:1.6">
+              HWID привязывается автоматически при первом запуске через лаунчер.
+              ${userProfile.hwid ? 'Устройство привязано.' : 'Устройство не привязано — запустите клиент через лаунчер.'}
+            </p>
             ${userProfile.hwid ? `
-              <p style="font-size:13px;color:var(--text-color-alower);margin-bottom:16px;line-height:1.6">Устройство привязано. При смене железа обратитесь в поддержку.</p>
-              <div class="hwid-box">${userProfile.hwid}</div>
-              <button class="btn-danger btn-sm" onclick="resetHwid()" style="margin-top:8px">
-                <i class="fa-solid fa-rotate"></i>Сбросить привязку
-              </button>
-            ` : `
-              <p style="font-size:13px;color:var(--text-color-alower);margin-bottom:16px;line-height:1.6">Введите ваш HWID из лаунчера для привязки устройства.</p>
-              <div class="field-row">
-                <label>HWID</label>
-                <input type="text" id="hwidInput" class="field-input" placeholder="Вставьте HWID из лаунчера" maxlength="64">
-              </div>
-              <button class="btn-fill" onclick="bindHwid()" style="width:100%;justify-content:center;margin-top:8px">
-                <i class="fa-solid fa-link"></i>Привязать устройство
-              </button>
-            `}
+              <div class="hwid-box">${userProfile.hwid.substring(0, 16)}...</div>
+            ` : ''}
+            <a href="#" id="resetHwidLink" class="btn-danger btn-sm" style="display:inline-flex;margin-top:8px;text-decoration:none">
+              <i class="fa-solid fa-rotate"></i>Сбросить HWID
+            </a>
           </div>
         </div>
         
@@ -493,45 +487,20 @@ window.copyToClipboard = function(text) {
   navigator.clipboard.writeText(text).then(() => toast('Скопировано!'));
 };
 
-// Bind HWID
-window.bindHwid = async function() {
-  const hwid = document.getElementById('hwidInput').value.trim();
-  if (!hwid || hwid.length < 10) {
-    toast('Введите корректный HWID', false);
-    return;
-  }
-  
-  // Check if HWID already used
-  const hwidQuery = query(collection(db, 'profiles'), where('hwid', '==', hwid));
-  const hwidSnap = await getDocs(hwidQuery);
-  if (!hwidSnap.empty) {
-    const otherUser = hwidSnap.docs[0].id;
-    if (otherUser !== currentUser.uid) {
-      toast('Этот HWID уже привязан к другому аккаунту', false);
-      return;
-    }
-  }
-  
-  try {
-    await updateDoc(doc(db, 'profiles', currentUser.uid), { hwid: hwid });
-    toast('HWID успешно привязан!');
-    renderDashboard();
-  } catch (e) {
-    toast('Ошибка привязки: ' + e.message, false);
-  }
+// Reset HWID — перенаправляет на сайт для сброса (лоадер сам привязывает HWID)
+const RESET_HWID_URL = 'https://funpay.com/lots/offer?id=68897387';
+
+window.resetHwid = function() {
+  window.open(RESET_HWID_URL, '_blank');
 };
 
-// Reset HWID
-window.resetHwid = async function() {
-  if (!confirm('Сбросить привязку устройства?')) return;
-  try {
-    await updateDoc(doc(db, 'profiles', currentUser.uid), { hwid: null });
-    toast('Привязка сброшена!');
-    renderDashboard();
-  } catch (e) {
-    toast('Ошибка: ' + e.message, false);
+// Устанавливаем URL для кнопки сброса
+document.addEventListener('DOMContentLoaded', function() {
+  const resetLink = document.getElementById('resetHwidLink');
+  if (resetLink) {
+    resetLink.href = RESET_HWID_URL;
   }
-};
+});
 
 // Logout
 window.logout = async function() {
