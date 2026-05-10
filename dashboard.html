@@ -388,6 +388,10 @@ async function renderDashboard() {
           <button class="dashboard-tab" onclick="switchTab('download', this)">
             <i class="fa-solid fa-download"></i>Скачать
           </button>
+          ${currentUser.email === ADMIN_EMAIL ? `
+          <a class="dashboard-tab" href="admin.html" style="text-decoration:none;background:var(--accent-color);border-color:var(--accent-color);color:var(--btn-primary-text)">
+            <i class="fa-solid fa-shield-halved"></i>Админ панель
+          </a>` : ''}
         </div>
         
         <!-- Subscriptions Tab -->
