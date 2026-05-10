@@ -104,7 +104,7 @@ const firebaseConfig = {
   appId:             "1:1071684024649:web:e2ccb6a284ba2e4d52c298"
 };
 // ADMIN emails — только эти люди видят эту страницу
-const ADMIN_EMAILS = ['whydoulive@yandex.ru', 'semyon.klementev@yandex.ru'];
+const ADMIN_EMAILS = ['whydoulive@yandex.ru'];
 // ══════════════════════════════════════════════
 
 const app  = initializeApp(firebaseConfig);
@@ -133,6 +133,11 @@ async function logAction(action, details) {
 
 function toast(msg, ok = true) {
   const t = document.getElementById('toast');
+  if (!t) {
+    console.error('[Toast] Element not found:', msg);
+    alert(msg);
+    return;
+  }
   t.textContent = msg;
   t.className = 'toast show ' + (ok ? 'ok' : 'err');
   setTimeout(() => t.className = 'toast', 3000);
@@ -175,7 +180,8 @@ async function renderAdmin() {
   logsSnap.forEach(d => logs.push({ id: d.id, ...d.data() }));
 
   // Update ban count badge
-  document.getElementById('banCount').textContent = bans.length;
+  const banCountEl = document.getElementById('banCount');
+  if (banCountEl) banCountEl.textContent = bans.length;
 
   const now        = new Date();
   const activeSubs = subs.filter(s => !isExpired(s.expires_at));
