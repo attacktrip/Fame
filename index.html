@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru" data-theme="dark">
 <head>
 <meta charset="UTF-8">
@@ -550,6 +550,8 @@ setPersistence(auth,browserLocalPersistence).catch(()=>{});
 onAuthStateChanged(auth,user=>{
   if(user){
     document.getElementById('headerAuth').innerHTML='<a class="header-profile-link" href="dashboard.html" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--text-color);font-size:14px;padding:6px 12px;border-radius:8px;border:1px solid var(--border-color);background:var(--button-bg)"><i class="fa-solid fa-user"></i>Профиль</a>';
+  } else {
+    document.getElementById('headerAuth').innerHTML='<a class="header-auth-link" href="#" onclick="openModal(\'login\');return false">Войти</a><a class="header-auth-primary" href="#" onclick="openModal(\'reg\');return false">Регистрация</a>';
   }
 });
 window.openModal=(tab)=>{
