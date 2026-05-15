@@ -1,0 +1,520 @@
+﻿<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fame Client — Кабинет</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root{--text-color:#ebebeb;--text-color-alower:rgba(255,255,255,.48);--bg-color:#090909;--bg-second-color:#161519;--border-color:rgba(255,255,255,.08);--accent-color:#6d706e;--button-bg:color-mix(in srgb,var(--bg-second-color),black 3.5%);--btn-primary-bg:var(--accent-color);--btn-primary-border:var(--accent-color);--btn-primary-text:#ecf8f6;--transition:all .2s ease-in-out;--sm-radius:8px;--md-radius:12px;--matte-glass-bg:rgba(255,255,255,.03);--matte-glass-border:rgba(255,255,255,.07);--matte-glass-blur:18px;--matte-glass-shadow:0 4px 24px rgba(0,0,0,.18)}
+[data-theme="light"]{--text-color:#1f1f1f;--text-color-alower:#5a5a5a;--bg-color:#f8f7f4;--bg-second-color:#efeee9;--border-color:rgba(0,0,0,.08);--accent-color:#6d706e;--button-bg:#e8e7e2;--btn-primary-text:#f2fbfa;--matte-glass-bg:rgba(0,0,0,.03);--matte-glass-border:rgba(0,0,0,.07)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg-color);color:var(--text-color);font-family:"Inter","Segoe UI",system-ui,sans-serif;min-height:100vh;-webkit-font-smoothing:antialiased}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(109,112,110,.5);border-radius:6px}
+.header{position:fixed;top:0;left:0;right:0;z-index:1000;height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 40px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);background:rgba(9,9,9,.85);border-bottom:1px solid var(--border-color)}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text-color)}
+.logo-mark{width:28px;height:28px;background:var(--accent-color);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--btn-primary-text);flex-shrink:0}
+.logo-text{font-size:16px;font-weight:600;letter-spacing:-.3px}
+.header-nav{display:flex;align-items:center;gap:4px}
+.header-nav a{color:var(--text-color-alower);text-decoration:none;font-size:14px;padding:6px 12px;border-radius:var(--sm-radius);transition:var(--transition)}
+.header-nav a:hover,.header-nav a.active{color:var(--text-color);background:rgba(255,255,255,.06)}
+.header-right{display:flex;align-items:center;gap:8px}
+.header-profile-link{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--text-color);font-size:14px;padding:6px 12px;border-radius:var(--sm-radius);border:1px solid var(--border-color);background:var(--button-bg);transition:var(--transition)}
+.header-profile-link:hover{border-color:var(--accent-color)}
+.header-avatar{width:24px;height:24px;border-radius:50%;background:var(--accent-color);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--btn-primary-text);flex-shrink:0}
+.floating-controls{position:fixed;bottom:24px;right:24px;z-index:900;display:flex;flex-direction:column;gap:8px}
+.header-utility-btn{width:40px;height:40px;border-radius:12px;border:1px solid var(--border-color);background:var(--button-bg);color:var(--text-color-alower);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;transition:var(--transition)}
+.header-utility-btn:hover{color:var(--text-color);border-color:var(--accent-color)}
+.hero-glow{position:fixed;top:-20%;left:50%;transform:translateX(-50%);width:800px;height:600px;background:radial-gradient(ellipse,rgba(109,112,110,.12) 0,transparent 70%);pointer-events:none;z-index:0}
+.dashboard-page{position:relative;z-index:1;padding:80px 24px 60px;min-height:100vh}
+.dashboard-shell{max-width:1100px;margin:0 auto}
+.dashboard-layout{display:grid;grid-template-columns:280px 1fr;gap:20px;align-items:start}
+.dashboard-sidebar{display:flex;flex-direction:column;gap:12px;position:sticky;top:80px}
+.dashboard-card{background:var(--matte-glass-bg);backdrop-filter:blur(var(--matte-glass-blur));-webkit-backdrop-filter:blur(var(--matte-glass-blur));border:1px solid var(--matte-glass-border);border-radius:20px;padding:20px;box-shadow:var(--matte-glass-shadow)}
+.profile-card{display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px;position:relative}
+.profile-avatar{width:72px;height:72px;border-radius:50%;background:var(--accent-color);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;color:var(--btn-primary-text);border:2px solid var(--border-color)}
+.profile-name-row{display:flex;align-items:center;justify-content:center;gap:8px}
+.profile-name-row h2{font-size:16px;font-weight:600}
+.profile-id{font-size:11px;color:var(--text-color-alower);background:var(--button-bg);border:1px solid var(--border-color);padding:2px 7px;border-radius:999px}
+.profile-info p{font-size:12px;color:var(--text-color-alower)}
+.profile-action{position:absolute;top:12px;right:12px;width:32px;height:32px;border-radius:8px;border:1px solid var(--border-color);background:transparent;color:var(--text-color-alower);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:var(--transition)}
+.profile-action:hover{border-color:rgba(248,113,113,.4);color:#f87171}
+.dashboard-quick-links{display:flex;flex-direction:column;gap:8px}
+.btn-fill{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:var(--sm-radius);background:var(--btn-primary-bg);color:var(--btn-primary-text);border:1px solid var(--btn-primary-border);font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;transition:var(--transition);justify-content:center}
+.btn-fill:hover{opacity:.85}
+.btn-sm{padding:7px 14px;font-size:12px}
+.btn-outline{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:var(--sm-radius);background:transparent;color:var(--text-color);border:1px solid var(--border-color);font-size:13px;font-weight:500;cursor:pointer;text-decoration:none;transition:var(--transition);justify-content:center}
+.btn-outline:hover{border-color:var(--accent-color)}
+.btn-danger{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:var(--sm-radius);background:transparent;color:#f87171;border:1px solid rgba(248,113,113,.3);font-size:13px;font-weight:500;cursor:pointer;transition:var(--transition);justify-content:center}
+.btn-danger:hover{background:rgba(248,113,113,.08)}
+.dashboard-main{display:flex;flex-direction:column;gap:16px}
+.dashboard-tabs{display:flex;gap:6px;flex-wrap:wrap}
+.dashboard-tab{display:flex;align-items:center;gap:7px;padding:8px 16px;border-radius:var(--sm-radius);border:1px solid var(--border-color);background:var(--button-bg);color:var(--text-color-alower);font-size:13px;font-weight:500;cursor:pointer;transition:var(--transition)}
+.dashboard-tab:hover{color:var(--text-color);border-color:var(--accent-color)}
+.dashboard-tab.active{background:var(--accent-color);border-color:var(--accent-color);color:var(--btn-primary-text)}
+.tab-panel{display:none}.tab-panel.active{display:flex;flex-direction:column;gap:16px}
+.info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.info-card-inner{background:rgba(0,0,0,.2);border:1px solid var(--border-color);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:4px}
+.info-label{font-size:11px;color:var(--text-color-alower);display:flex;align-items:center;gap:6px;text-transform:uppercase;letter-spacing:.08em}
+.info-value{font-size:13px;color:var(--text-color);font-weight:500}
+.info-value.muted{color:var(--text-color-alower)}
+.license-row{display:flex;gap:8px;align-items:center}
+.license-input{flex:1;display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:var(--sm-radius);border:1px solid var(--border-color);background:rgba(0,0,0,.2);color:var(--text-color);font-size:13px}
+.license-input i{color:var(--text-color-alower);font-size:12px;flex-shrink:0}
+.license-input input{flex:1;background:transparent;border:none;color:var(--text-color);font-size:13px;outline:none}
+.dashboard-btn{display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:var(--sm-radius);background:var(--btn-primary-bg);color:var(--btn-primary-text);border:1px solid var(--btn-primary-border);font-size:13px;font-weight:600;cursor:pointer;transition:var(--transition);white-space:nowrap}
+.dashboard-btn:hover{opacity:.85}
+.card-title{font-size:11px;font-weight:700;color:var(--text-color-alower);text-transform:uppercase;letter-spacing:.1em;margin-bottom:14px}
+.subs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.sub-card{background:rgba(0,0,0,.2);border:1px solid var(--border-color);border-radius:14px;padding:14px;position:relative;transition:var(--transition)}
+.sub-card.active-sub{border-color:rgba(109,112,110,.4)}
+.sub-card.expired-sub{opacity:.55}
+.sub-badge{position:absolute;top:10px;right:10px;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:700;letter-spacing:.06em}
+.sub-badge-active{background:rgba(124,255,164,.1);color:#7cffb3;border:1px solid rgba(124,255,164,.3)}
+.sub-badge-expired{background:rgba(255,255,255,.06);color:var(--text-color-alower);border:1px solid var(--border-color)}
+.sub-version{font-size:10px;font-weight:700;color:var(--accent-color);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px}
+.sub-name{font-size:15px;font-weight:600;margin-bottom:6px}
+.sub-expires{font-size:12px;color:var(--text-color-alower)}
+.sub-expires span{color:var(--text-color)}
+.field-row{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.field-row label{font-size:12px;color:var(--text-color-alower)}
+.field-input{width:100%;padding:9px 12px;background:rgba(0,0,0,.25);border:1px solid var(--border-color);border-radius:var(--sm-radius);color:var(--text-color);font-size:13px;outline:none;transition:var(--transition)}
+.field-input:focus{border-color:var(--accent-color)}
+.hwid-box{background:rgba(0,0,0,.3);border:1px solid var(--border-color);border-radius:8px;padding:10px 12px;font-family:monospace;font-size:11px;color:var(--text-color-alower);word-break:break-all;margin-bottom:12px;line-height:1.5}
+.uid-copy-row{display:flex;align-items:center;justify-content:space-between;gap:8px;background:rgba(0,0,0,.25);border:1px solid var(--border-color);border-radius:8px;padding:8px 12px;margin-bottom:14px}
+.uid-copy-row .uid-text{font-family:monospace;font-size:11px;color:var(--text-color-alower);word-break:break-all;flex:1}
+.uid-copy-btn{flex-shrink:0;background:transparent;border:1px solid var(--border-color);color:var(--text-color-alower);padding:4px 10px;border-radius:6px;font-size:11px;cursor:pointer;transition:var(--transition);white-space:nowrap}
+.uid-copy-btn:hover{border-color:var(--accent-color);color:var(--text-color)}
+.download-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.download-info h3{font-size:15px;font-weight:600;margin-bottom:4px}
+.download-info p{font-size:12px;color:var(--text-color-alower)}
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid var(--border-color);border-top-color:var(--accent-color);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-state{display:flex;align-items:center;justify-content:center;min-height:60vh;gap:12px;color:var(--text-color-alower);font-size:14px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:rgba(22,21,25,.95);border:1px solid var(--border-color);border-radius:12px;padding:12px 20px;font-size:13px;z-index:9999;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.toast.ok{border-color:rgba(124,255,164,.4);color:#7cffb3}
+.toast.err{border-color:rgba(248,113,113,.4);color:#f87171}
+.footer{border-top:1px solid var(--border-color);padding:32px 40px 24px;margin-top:40px;position:relative;z-index:1}
+.footer-container{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin-bottom:24px}
+.footer-column-title{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--text-color-alower);text-transform:uppercase;letter-spacing:.12em;margin-bottom:12px}
+.footer-column nav{display:flex;flex-direction:column;gap:8px}
+.footer-column nav a,.footer-column nav span{color:var(--text-color-alower);text-decoration:none;font-size:13px;transition:var(--transition)}
+.footer-column nav a:hover{color:var(--text-color)}
+.footer-line{max-width:1100px;margin:0 auto 20px;height:1px;background:var(--border-color)}
+.footer-bottom{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.footer-logo-text{font-size:15px;font-weight:600;color:var(--text-color-alower)}
+.footer-bottom>div{font-size:12px;color:var(--text-color-alower)}
+/* ANIMATIONS */
+@keyframes fadeInUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeInScale{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+@keyframes slideInLeft{from{opacity:0;transform:translateX(-30px)}to{opacity:1;transform:translateX(0)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes glow-pulse{0%,100%{box-shadow:0 0 20px rgba(109,112,110,.3)}50%{box-shadow:0 0 40px rgba(109,112,110,.6)}}
+.animate-fadeInUp{animation:fadeInUp .8s ease-out forwards;opacity:0}
+.animate-fadeInScale{animation:fadeInScale .6s ease-out forwards;opacity:0}
+.animate-slideInLeft{animation:slideInLeft .7s ease-out forwards;opacity:0}
+.animate-float{animation:float 4s ease-in-out infinite}
+.animate-glow-pulse{animation:glow-pulse 2s ease-in-out infinite}
+.delay-100{animation-delay:.1s}
+.delay-200{animation-delay:.2s}
+.delay-300{animation-delay:.3s}
+
+/* Hover animations */
+.dashboard-card{transition:all .4s cubic-bezier(.4,0,.2,1)}
+.dashboard-card:hover{transform:translateY(-5px);box-shadow:0 20px 40px rgba(0,0,0,.3)}
+.sub-card{transition:all .3s ease}
+.sub-card:hover{transform:scale(1.02);border-color:rgba(109,112,110,.3)}
+.btn-fill,.btn-outline,.dashboard-btn,.dashboard-tab{transition:all .3s cubic-bezier(.4,0,.2,1)}
+.btn-fill:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(109,112,110,.4)}
+.btn-outline:hover{transform:translateY(-2px)}
+.dashboard-tab:hover{transform:translateY(-2px)}
+
+/* Logo animation */
+.logo-text{transition:all .3s ease}
+.logo:hover .logo-text{letter-spacing:2px;text-shadow:0 0 20px rgba(109,112,110,.5)}
+
+/* Nav link hover */
+.header-nav a{position:relative}
+.header-nav a::after{content:'';position:absolute;bottom:-2px;left:50%;width:0;height:2px;background:var(--accent-color);transition:all .3s;transform:translateX(-50%);border-radius:2px}
+.header-nav a:hover::after{width:80%}
+
+/* Card hover glow */
+.sub-card.active-sub:hover{box-shadow:0 0 30px rgba(109,112,110,.2)}
+
+/* Scroll reveal */
+.reveal{opacity:0;transform:translateY(30px);transition:all .6s cubic-bezier(.4,0,.2,1)}
+.reveal.active{opacity:1;transform:translateY(0)}
+
+@media(max-width:900px){.dashboard-layout{grid-template-columns:1fr}.dashboard-sidebar{position:static}.header{padding:0 20px}.footer-container{grid-template-columns:1fr}.footer{padding:24px 20px}}
+@media(max-width:600px){.info-grid{grid-template-columns:1fr 1fr}.dashboard-page{padding:72px 14px 40px}}
+</style>
+</head>
+<body>
+<div class="hero-glow"></div>
+
+<header class="header">
+  <a class="logo" href="index.html">
+    <span class="logo-text">Fame Client</span>
+  </a>
+  <nav class="header-nav">
+    <a href="index.html">Главная</a>
+    <a href="index.html#pricing">Цены</a>
+  </nav>
+  <div class="header-right" id="headerRight">
+    <div class="spinner"></div>
+  </div>
+</header>
+
+<div class="floating-controls">
+  <button class="header-utility-btn" id="themeBtn" aria-label="Тема"><i class="fa-regular fa-moon"></i></button>
+</div>
+
+<div class="dashboard-page">
+  <div class="dashboard-shell">
+    <div id="mainContent" class="loading-state">
+      <div class="spinner"></div> Проверка авторизации...
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-container">
+    <div class="footer-column">
+      <div class="footer-column-title"><i class="fa-solid fa-house"></i>Страницы</div>
+      <nav><a href="index.html">Главная</a><a href="index.html#pricing">Цены</a></nav>
+    </div>
+    <div class="footer-column">
+      <div class="footer-column-title"><i class="fa-brands fa-telegram"></i>Связь</div>
+      <nav><a href="https://t.me/fameoftrip" target="_blank"><i class="fa-brands fa-telegram"></i> Telegram</a></nav>
+    </div>
+    <div class="footer-column">
+      <div class="footer-column-title"><i class="fa-solid fa-user"></i>Аккаунт</div>
+      <nav><a href="index.html">На главную</a></nav>
+    </div>
+  </div>
+  <div class="footer-line"></div>
+  <div class="footer-bottom">
+    <a class="footer-logo" href="index.html"><span class="footer-logo-text">Fame Client</span></a>
+    <div>  Fame Client, 2025. Все права защищены</div>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// FIREBASE AUTH & LOGIC (compat API)
+// ═══════════════════════════════════════════════════════════════
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAiZv5BNz7Kj0-b41LHLB7P3Y_w9BupqqQ",
+  authDomain: "fameclient-a8735.firebaseapp.com",
+  projectId: "fameclient-a8735",
+  storageBucket: "fameclient-a8735.firebasestorage.app",
+  messagingSenderId: "1071684024649",
+  appId: "1:1071684024649:web:e2ccb6a284ba2e4d52c298",
+  measurementId: "G-01XPQE2BPX"
+};
+
+console.log('[Dashboard] Initializing Firebase...');
+const app = firebase.initializeApp(firebaseConfig);
+console.log('[Dashboard] Firebase app:', app.name);
+
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+console.log('[Dashboard] Auth and Firestore initialized');
+
+auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+  .then(() => console.log('[Dashboard] Persistence enabled'))
+  .catch(e => console.error('[Dashboard] Persistence error:', e));
+
+let currentUser = null;
+let userProfile = null;
+let userSubs = [];
+
+const ADMIN_EMAIL = 'whydoulive@yandex.ru';
+
+function toast(msg, ok) {
+  const t = document.getElementById('toast');
+  if (!t) { alert(msg); return; }
+  t.textContent = msg;
+  t.className = 'toast show ' + (ok !== false ? 'ok' : 'err');
+  setTimeout(() => t.className = 'toast', 3000);
+}
+
+function formatDate(d) {
+  if (!d) return '—';
+  return new Date(d).toLocaleDateString('ru-RU', { day:'2-digit', month:'2-digit', year:'numeric' });
+}
+
+function withTimeout(promise, ms, label) {
+  ms = ms || 10000;
+  label = label || 'Operation';
+  return new Promise(function(resolve, reject) {
+    const timer = setTimeout(function() { reject(new Error('[' + label + '] Превышен таймаут (' + ms + 'ms)')); }, ms);
+    promise.then(
+      function(val) { clearTimeout(timer); resolve(val); },
+      function(err) { clearTimeout(timer); reject(err); }
+    );
+  });
+}
+
+function isExpired(d) {
+  if (!d) return false;
+  return new Date(d) < new Date();
+}
+
+async function checkBanned(uid) {
+  const banDoc = await withTimeout(db.doc('bans', uid).get(), 8000, 'checkBanned');
+  return banDoc.exists;
+}
+
+async function renderDashboard() {
+  console.log('[Dashboard] renderDashboard started for UID:', currentUser.uid);
+  const container = document.getElementById('mainContent');
+
+  console.log('[Dashboard] Checking ban status...');
+  let isUserBanned = false;
+  try { isUserBanned = await checkBanned(currentUser.uid); } catch (e) { console.warn('[Dashboard] Ban check failed:', e.message); }
+  console.log('[Dashboard] Ban status:', isUserBanned);
+  if (isUserBanned) {
+    container.innerHTML = '<div style="text-align:center;padding:60px 20px"><div style="font-size:64px;margin-bottom:20px">🚫</div><h2 style="font-size:24px;margin-bottom:12px;color:#f87171">Аккаунт заблокирован</h2><p style="color:var(--text-color-alower);margin-bottom:24px">Ваш аккаунт был заблокирован администратором.</p><button onclick="logout()" class="btn-fill" style="background:#f87171;border-color:#f87171">Выйти</button></div>';
+    return;
+  }
+
+  console.log('[Dashboard] Loading profile from Firestore...');
+  let profileDoc;
+  try {
+    profileDoc = await withTimeout(db.doc('profiles', currentUser.uid).get(), 10000, 'getProfile');
+  } catch (e) {
+    console.error('[Dashboard] Profile load failed:', e.message);
+    container.innerHTML = '<div style="text-align:center;padding:60px 20px"><div style="font-size:48px;margin-bottom:16px">⚠️</div><h2 style="font-size:20px;margin-bottom:12px">Ошибка загрузки</h2><p style="color:var(--text-color-alower);margin-bottom:16px">Не удалось загрузить профиль. Проверьте подключение к интернету.</p><button onclick="location.reload()" class="btn-fill">Обновить</button></div>';
+    return;
+  }
+  console.log('[Dashboard] Profile exists:', profileDoc.exists);
+  if (!profileDoc.exists) {
+    await db.doc('profiles', currentUser.uid).set({
+      email: currentUser.email,
+      nickname: currentUser.email.split('@')[0],
+      hwid: null,
+      created_at: new Date().toISOString()
+    });
+    userProfile = { email: currentUser.email, nickname: currentUser.email.split('@')[0], hwid: null };
+  } else {
+    userProfile = profileDoc.data();
+  }
+
+  console.log('[Dashboard] Loading subscriptions...');
+  try {
+    const subsSnap = await withTimeout(db.collection('subscriptions').where('user_id', '==', currentUser.uid).get(), 10000, 'getSubs');
+    userSubs = [];
+    subsSnap.forEach(function(d) { userSubs.push({ id: d.id, plan: d.data().plan, expires_at: d.data().expires_at }); });
+    console.log('[Dashboard] Loaded', userSubs.length, 'subscriptions');
+  } catch (e) {
+    console.error('[Dashboard] Subscriptions load failed:', e.message);
+    userSubs = [];
+  }
+
+  const activeSubs = userSubs.filter(function(s) { return !isExpired(s.expires_at); });
+  const expiredSubs = userSubs.filter(function(s) { return isExpired(s.expires_at); });
+
+  const headerRightEl = document.getElementById('headerRight');
+  if (headerRightEl) {
+    headerRightEl.innerHTML = '<a class="header-profile-link" href="#" onclick="logout();return false"><i class="fa-solid fa-right-from-bracket"></i>Выйти</a>';
+  }
+
+  const PLAN_LABELS = {
+    '1214_basic': 'Basic 1.21.4',
+    '1214_premium': 'Premium 1.21.4',
+    '1214_lifetime': 'Lifetime 1.21.4',
+  };
+
+  const activeSubsHtml = activeSubs.map(function(s) {
+    return '<div class="sub-card active-sub animate-fadeInScale"><span class="sub-badge sub-badge-active">' + (s.plan && s.plan.includes('lifetime') ? 'LIFETIME' : 'АКТИВНА') + '</span><div class="sub-version">' + (PLAN_LABELS[s.plan] || s.plan) + '</div><div class="sub-name">' + (s.plan && s.plan.includes('premium') ? 'Премиум доступ' : s.plan && s.plan.includes('basic') ? 'Базовый доступ' : 'Пожизненный доступ') + '</div><div class="sub-expires">' + (s.expires_at ? 'Истекает: <span>' + formatDate(s.expires_at) + '</span>' : '<span style="color:#f59e0b">♾ Навсегда</span>') + '</div></div>';
+  }).join('');
+
+  const expiredSubsHtml = expiredSubs.map(function(s) {
+    return '<div class="sub-card expired-sub"><span class="sub-badge sub-badge-expired">ИСТЕКЛА</span><div class="sub-version">' + (PLAN_LABELS[s.plan] || s.plan) + '</div><div class="sub-name">' + (s.plan && s.plan.includes('premium') ? 'Премиум доступ' : s.plan && s.plan.includes('basic') ? 'Базовый доступ' : 'Пожизненный доступ') + '</div><div class="sub-expires">Истекла: <span>' + formatDate(s.expires_at) + '</span></div></div>';
+  }).join('');
+
+  const adminTabHtml = currentUser.email === ADMIN_EMAIL
+    ? '<a class="dashboard-tab" href="admin.html" style="text-decoration:none;background:var(--accent-color);border-color:var(--accent-color);color:var(--btn-primary-text)"><i class="fa-solid fa-shield-halved"></i>Админ панель</a>'
+    : '';
+
+  const subsContent = userSubs.length === 0
+    ? '<div style="text-align:center;padding:40px;color:var(--text-color-alower)">У вас нет активных подписок</div>'
+    : ('<div class="card-title" style="font-size:12px;font-weight:700;color:var(--text-color-alower);text-transform:uppercase;letter-spacing:.1em;margin-bottom:16px">Активные подписки</div><div class="subs-grid">' + activeSubsHtml + '</div>' + (expiredSubs.length > 0 ? '<div class="card-title" style="font-size:12px;font-weight:700;color:var(--text-color-alower);text-transform:uppercase;letter-spacing:.1em;margin:24px 0 16px">Истёкшие подписки</div><div class="subs-grid">' + expiredSubsHtml + '</div>' : ''));
+
+  const downloadContent = activeSubs.length > 0
+    ? '<div class="download-row"><div class="download-info"><h3>Fame Client 1.21.4</h3><p>Последняя версия чита для Minecraft 1.21.4</p></div><a href="https://github.com/attacktrip/Fame/releases/latest" target="_blank" class="btn-fill"><i class="fa-solid fa-download"></i>Скачать</a></div>'
+    : '<p style="font-size:13px;color:var(--text-color-alower);text-align:center;padding:20px">Для скачивания клиента необходима активная подписка.</p><a href="index.html#pricing" class="btn-outline" style="width:100%;justify-content:center"><i class="fa-solid fa-cart-shopping"></i>Купить подписку</a>';
+
+  container.innerHTML = '<div class="dashboard-layout"><div class="dashboard-sidebar"><div class="dashboard-card profile-card animate-fadeInUp"><button class="profile-action" onclick="logout()" title="Выйти"><i class="fa-solid fa-right-from-bracket"></i></button><div class="profile-avatar">' + ((userProfile.nickname || 'U').charAt(0).toUpperCase()) + '</div><div class="profile-info"><div class="profile-name-row"><h2>' + (userProfile.nickname || 'Пользователь') + '</h2></div><div class="profile-id" onclick="copyToClipboard(\'' + currentUser.uid + '\')" title="Кликни чтобы скопировать UID">UID: ' + currentUser.uid.substring(0, 8) + '...</div><p style="font-size:12px;color:var(--text-color-alower);margin-top:4px">' + (userProfile.email || currentUser.email) + '</p></div></div><div class="dashboard-card dashboard-quick-links animate-fadeInUp delay-100"><a class="btn-fill" href="https://t.me/fameoftrip" target="_blank"><i class="fa-brands fa-telegram"></i>Поддержка</a><a class="btn-outline" href="index.html"><i class="fa-solid fa-house"></i>На главную</a></div></div><div class="dashboard-main"><div class="info-grid animate-fadeInUp delay-200"><div class="info-card-inner"><div class="info-label"><i class="fa-solid fa-key"></i>HWID</div><div class="info-value ' + (userProfile.hwid ? '' : 'muted') + '">' + (userProfile.hwid ? userProfile.hwid.substring(0, 16) + '...' : 'Не привязан') + '</div></div><div class="info-card-inner"><div class="info-label"><i class="fa-solid fa-check-circle"></i>Активных подписок</div><div class="info-value" style="color:#4ade80">' + activeSubs.length + '</div></div><div class="info-card-inner"><div class="info-label"><i class="fa-solid fa-calendar"></i>Всего подписок</div><div class="info-value">' + userSubs.length + '</div></div></div><div class="dashboard-tabs animate-fadeInUp delay-300"><button class="dashboard-tab active" onclick="switchTab(\'subs\', this)"><i class="fa-solid fa-crown"></i>Мои подписки</button><button class="dashboard-tab" onclick="switchTab(\'hwid\', this)"><i class="fa-solid fa-computer"></i>Привязка HWID</button><button class="dashboard-tab" onclick="switchTab(\'download\', this)"><i class="fa-solid fa-download"></i>Скачать</button><button class="dashboard-tab" onclick="switchTab(\'key\', this)"><i class="fa-solid fa-key"></i>Активация</button>' + adminTabHtml + '</div><div class="tab-panel active" id="tab-subs">' + subsContent + '</div><div class="tab-panel" id="tab-hwid"><div class="dashboard-card animate-fadeInUp"><div class="card-title"><i class="fa-solid fa-computer"></i>Устройство (HWID)</div><p style="font-size:13px;color:var(--text-color-alower);margin-bottom:16px;line-height:1.6">HWID привязывается автоматически при первом запуске через лаунчер. ' + (userProfile.hwid ? 'Устройство привязано.' : 'Устройство не привязано — запустите клиент через лаунчер.') + '</p>' + (userProfile.hwid ? '<div class="hwid-box">' + userProfile.hwid.substring(0, 16) + '...</div>' : '') + '<a href="#" id="resetHwidLink" class="btn-danger btn-sm" style="display:inline-flex;margin-top:8px;text-decoration:none"><i class="fa-solid fa-rotate"></i>Сбросить HWID</a></div></div><div class="tab-panel" id="tab-download"><div class="dashboard-card animate-fadeInUp"><div class="card-title"><i class="fa-solid fa-download"></i>Скачать клиент</div>' + downloadContent + '</div></div></div><div class="tab-panel" id="tab-key"><div class="dashboard-card animate-fadeInUp"><div class="card-title"><i class="fa-solid fa-key"></i>Активация ключа</div><p style="font-size:13px;color:var(--text-color-alower);margin-bottom:20px;line-height:1.6">Введите ключ активации, полученный от администратора. Ключ добавит подписку к вашему аккаунту.</p><div class="field-row"><label style="font-size:12px;color:var(--text-color-alower)">Ключ активации</label><div style="display:flex;gap:8px"><input type="text" id="activateKeyInput" class="field-input" placeholder="FAME-XXXX-XXXX-XXXX" style="flex:1"><button class="btn-fill" id="activateKeyBtn" style="white-space:nowrap">Активировать</button></div><div id="activateKeyResult" style="font-size:12px;margin-top:6px;min-height:18px"></div></div></div></div></div>';
+
+  setTimeout(function() {
+    const els = document.querySelectorAll('.animate-fadeInUp, .animate-fadeInScale');
+    els.forEach(function(el, i) {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(20px)';
+      setTimeout(function() {
+        el.style.transition = 'all .5s cubic-bezier(.4,0,.2,1)';
+        el.style.opacity = '1';
+        el.style.transform = 'translateY(0)';
+      }, i * 100);
+    });
+  }, 50);
+}
+
+window.switchTab = function(tabName, btn) {
+  document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelectorAll('.dashboard-tab').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById('tab-' + tabName).classList.add('active');
+  btn.classList.add('active');
+};
+
+window.copyToClipboard = function(text) {
+  navigator.clipboard.writeText(text).then(function() { toast('Скопировано!'); });
+};
+
+const RESET_HWID_URL = 'https://funpay.com/lots/offer?id=68897387';
+
+window.resetHwid = function() {
+  window.open(RESET_HWID_URL, '_blank');
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+  const resetLink = document.getElementById('resetHwidLink');
+  if (resetLink) resetLink.href = RESET_HWID_URL;
+});
+
+function logout() {
+  firebase.auth().signOut().then(function() { window.location.href = 'index.html'; }).catch(function(e) { toast('Ошибка выхода', false); });
+}
+
+let authChecked = false;
+
+auth.onAuthStateChanged(function(user) {
+  authChecked = true;
+  console.log('[Dashboard] Auth state changed:', user ? 'User: ' + user.email + ' (UID: ' + user.uid + ')' : 'No user');
+
+  if (!user) {
+    console.log('[Dashboard] No user - showing login prompt');
+    const mainContentEl = document.getElementById('mainContent');
+    const headerRightEl2 = document.getElementById('headerRight');
+    if (mainContentEl) {
+      mainContentEl.innerHTML = '<div style="text-align:center;padding:60px 20px"><div style="font-size:48px;margin-bottom:16px">🔒</div><h2 style="font-size:20px;margin-bottom:12px">Требуется авторизация</h2><p style="color:var(--text-color-alower);margin-bottom:24px">Войдите в аккаунт для доступа к кабинету</p><a href="index.html" class="btn-fill">Войти</a></div>';
+    }
+    if (headerRightEl2) headerRightEl2.innerHTML = '<a class="header-auth-link" href="index.html">Войти</a>';
+    return;
+  }
+
+  currentUser = user;
+  console.log('[Dashboard] User authenticated, rendering dashboard...');
+
+  renderDashboard().then(function() {
+    console.log('[Dashboard] Dashboard rendered successfully');
+
+    const activateKeyBtn = document.getElementById('activateKeyBtn');
+    const activateKeyInput = document.getElementById('activateKeyInput');
+    const activateKeyResult = document.getElementById('activateKeyResult');
+
+    if (activateKeyBtn) {
+      activateKeyBtn.addEventListener('click', function() {
+        const rawKey = activateKeyInput ? activateKeyInput.value.trim().toUpperCase() : '';
+        if (!rawKey) {
+          activateKeyResult.style.color = 'var(--text-color-alower)';
+          activateKeyResult.textContent = 'Введите ключ';
+          return;
+        }
+
+        activateKeyBtn.disabled = true;
+        activateKeyBtn.textContent = '...';
+        activateKeyResult.textContent = '';
+
+        db.collection('keys').where('key', '==', rawKey).get().then(function(snap) {
+          if (snap.empty) {
+            activateKeyResult.style.color = '#f87171';
+            activateKeyResult.textContent = 'Ключ не найден';
+            activateKeyBtn.disabled = false;
+            activateKeyBtn.textContent = 'Активировать';
+            return;
+          }
+
+          const keyDoc = snap.docs[0];
+          const keyData = keyDoc.data();
+
+          if (keyData.used) {
+            activateKeyResult.style.color = '#f87171';
+            activateKeyResult.textContent = 'Ключ уже использован';
+            activateKeyBtn.disabled = false;
+            activateKeyBtn.textContent = 'Активировать';
+            return;
+          }
+
+          let expires_at = null;
+          if (keyData.duration_days > 0) {
+            const d = new Date();
+            d.setDate(d.getDate() + keyData.duration_days);
+            expires_at = d.toISOString();
+          }
+
+          return db.collection('subscriptions').add({
+            user_id: currentUser.uid,
+            plan: keyData.plan,
+            expires_at: expires_at,
+            created_at: new Date().toISOString(),
+            activated_by_key: rawKey
+          }).then(function() {
+            return db.doc('keys', keyDoc.id).update({
+              used: true,
+              used_by: currentUser.uid,
+              used_by_email: currentUser.email,
+              used_at: new Date().toISOString()
+            });
+          }).then(function() {
+            activateKeyResult.style.color = '#4ade80';
+            activateKeyResult.textContent = '✓ Подписка активирована! Перейдите в "Мои подписки"';
+            activateKeyInput.value = '';
+            activateKeyBtn.disabled = false;
+            activateKeyBtn.textContent = 'Активировать';
+          });
+        }).catch(function(e) {
+          activateKeyResult.style.color = '#f87171';
+          activateKeyResult.textContent = 'Ошибка: ' + (e.message || 'Неизвестная ошибка');
+          activateKeyBtn.disabled = false;
+          activateKeyBtn.textContent = 'Активировать';
+        });
+      });
+    }
+  }).catch(function(e) {
+    console.error('[Dashboard] Error rendering dashboard:', e);
+    const mainContentErr = document.getElementById('mainContent');
+    if (mainContentErr) {
+      mainContentErr.innerHTML = '<div style="text-align:center;padding:60px 20px;color:#f87171"><div style="font-size:48px;margin-bottom:16px">⚠️</div><h2 style="font-size:20px;margin-bottom:12px">Ошибка загрузки</h2><p style="margin-bottom:24px">' + e.message + '</p><button onclick="location.reload()" class="btn-fill">Перезагрузить</button></div>';
+    }
+  });
+});
+
+setTimeout(function() {
+  if (!authChecked) {
+    const mainContentTimeout = document.getElementById('mainContent');
+    if (mainContentTimeout) {
+      mainContentTimeout.innerHTML = '<div style="text-align:center;padding:60px 20px"><div style="font-size:48px;margin-bottom:16px">⏳</div><h2 style="font-size:20px;margin-bottom:12px">Проверка авторизации...</h2><p style="color:var(--text-color-alower);margin-bottom:24px">Если загрузка занимает слишком долго, попробуйте войти снова</p><a href="index.html" class="btn-fill">Войти</a></div>';
+    }
+  }
+}, 5000);
+
+const themeBtn = document.getElementById('themeBtn');
+if (themeBtn) {
+  themeBtn.addEventListener('click', function() {
+    const html = document.documentElement;
+    const isDark = html.getAttribute('data-theme') === 'dark';
+    html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    this.innerHTML = isDark ? '<i class="fa-regular fa-sun"></i>' : '<i class="fa-regular fa-moon"></i>';
+  });
+}
+</script>
+</body>
+</html>
